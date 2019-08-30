@@ -1,0 +1,15 @@
+test page
+http://localhost/threejs/nodejs/commonNodeJS/colorpicker/Example/index.html
+https://raw.githack.com/anhr/ColorPicker/master/index.html
+-------------------------------------------
+JSDoc 3 is an API documentation generator for JavaScript
+https://jsdoc.app/
+--------------------------------
+Building colorpicker
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\nodejs\commonNodeJS\colorpicker"
+npm install
+npm run build
