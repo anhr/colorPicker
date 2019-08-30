@@ -31,8 +31,8 @@ Now you can use window.ColorPicker for select a color from picker.
 
 Creates an instance of ColorPicker.
 
-	elSliderWrapper: id of the ColorPicker element or ColorPicker element.
-	options: See details in the `function create( elSliderWrapper, options )` in the [index.js](https://github.com/anhr/colorPicker/blob/master/index.js) file.
+elSliderWrapper: id of the ColorPicker element or ColorPicker element.
+options: See details in the `function create( elSliderWrapper, options )` in the [index.js](https://github.com/anhr/colorPicker/blob/master/index.js) file.
 
 #### Example of the simple ColorPicker
 ```
