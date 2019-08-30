@@ -363,7 +363,8 @@ var loadScript = {
  */
 var optionsStyle = {
 	tag: 'style'
-};loadScript.sync('http://localhost/threejs/nodejs/commonNodeJS/colorpicker/colorpicker.css', optionsStyle);
+};
+loadScript.sync('https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle);
 var type = window.SVGAngle || document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? "SVG" : "VML";
 var svgNS = 'http://www.w3.org/2000/svg';
 var uniqID = 0;

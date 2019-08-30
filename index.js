@@ -13,15 +13,16 @@
  */
 
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
-import loadScript from '../../loadScriptNodeJS/loadScript.js';
+import loadScript from '../loadScriptNodeJS/loadScript.js';
 var optionsStyle = {
 
 	//style rel="stylesheet"
 	tag: 'style'
 
 }
-//loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/menu.css', optionsStyle );
-loadScript.sync( 'http://localhost/threejs/nodejs/commonNodeJS/colorpicker/colorpicker.css', optionsStyle );
+loadScript.sync( 'https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle );
+//loadScript.sync( 'http://localhost/threejs/nodejs/colorpicker/colorpicker.css', optionsStyle );
+//loadScript.sync( '../colorpicker.css', optionsStyle );
 
 var type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
 	hueOffset = 15, svgNS = 'http://www.w3.org/2000/svg', uniqID = 0;
