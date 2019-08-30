@@ -1,7 +1,7 @@
 ﻿# ColorPicker
  ColorPicker - pure JavaScript color picker.
 
-[Example of using](https://raw.githack.com/anhr/ColorPicker/master/).
+[Example of using](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
 
 ## Packaged Builds
 The easiest way to use ColorPicker in your code is by using the built source at `build/colorpicker.js`.
@@ -53,7 +53,7 @@ ColorPicker.create( "colorpicker", {
 } );
 ```
 
-See [Example of using](https://raw.githack.com/anhr/ColorPicker/master/).
+See [Example of using](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
 
 ## Directory Contents
 
