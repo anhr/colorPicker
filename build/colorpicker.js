@@ -644,7 +644,6 @@ var paletteIndexes = {
 					var wrapper = evt.target.parentNode.parentNode;
 					return { x: evt.layerX - wrapper.offsetLeft, y: evt.layerY - wrapper.offsetTop };
 				}
-				console.warn('evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY);
 				mouseMove(mousePosition(evt));
 			};
 		};

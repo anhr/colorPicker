@@ -15,9 +15,13 @@
  */
 
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
+
+//local version
 //import loadScript from '../loadScriptNodeJS/loadScript.js';
+
 import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
+
 var optionsStyle = {
 
 	//style rel="stylesheet"
@@ -594,7 +598,7 @@ export function create( elSliderWrapper, options ) {
 					return { x: evt.layerX - wrapper.offsetLeft, y: evt.layerY - wrapper.offsetTop };
 				}
 
-console.warn( 'evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY );
+//console.warn( 'evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY );
 				mouseMove( mousePosition( evt ) );
 
 			}
