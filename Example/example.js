@@ -35,6 +35,7 @@ function example( ColorPicker ) {
 			value: 75,//percent
 
 		},
+		/*
 		style: {
 
 			border: '10px solid black',
@@ -42,6 +43,7 @@ function example( ColorPicker ) {
 			height: '20px',
 
 		},
+		*/
 		onError: function ( message ) { alert( 'Horizontal Colorpicker with slider indicator error: ' + message ); }
 
 	} );
@@ -78,6 +80,7 @@ function example( ColorPicker ) {
 			},
 			value: '10%',//percent
 		},
+		/*
 		style: {
 
 			border: '1px solid black',
@@ -85,6 +88,7 @@ function example( ColorPicker ) {
 			height: 100,
 
 		},
+		*/
 		onError: function ( message ) { alert( 'Vertical Colorpicker with slider indicator error: ' + message ); }
 
 	} );
@@ -112,7 +116,6 @@ function example( ColorPicker ) {
 			value: 25,//percent
 
 		},
-		/*
 		style: {
 
 			border: '10px solid black',
@@ -120,7 +123,6 @@ function example( ColorPicker ) {
 			height: '20px',
 
 		},
-		*/
 		onError: function ( message ) { alert( 'Horizontal Colorpicker with direction from right to left error: ' + message ); }
 
 	} );
@@ -151,9 +153,9 @@ function example( ColorPicker ) {
 		},
 		style: {
 
-			//border: '1px solid black',
-			//width: 10,
-			//height: 100,
+			border: '1px solid black',
+			width: 10,
+			height: 100,
 
 		},
 		onError: function ( message ) { alert( 'Vertical Colorpicker with direction from up to down error: ' + message ); }
