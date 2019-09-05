@@ -56,5 +56,8 @@
       "no-bitwise": 0,
       "no-plusplus": 0
     }
+  },
+  "dependencies": {
+    "error-js": "0.0.5"
   }
 }

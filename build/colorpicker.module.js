@@ -342,10 +342,18 @@ var loadScript = {
   async: async
 };
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
 /**
  * ColorPicker - pure JavaScript color picker.
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ *
+ * Thanks to FlexiColorPicker https://github.com/DavidDurman/FlexiColorPicker
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -357,18 +365,27 @@ var loadScript = {
  */
 var optionsStyle = {
 	tag: 'style'
-};
-loadScript.sync('https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle);
+};loadScript.sync('../colorpicker.css', optionsStyle);
 var type = window.SVGAngle || document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? "SVG" : "VML";
 var svgNS = 'http://www.w3.org/2000/svg';
 var uniqID = 0;
-function create(elSliderWrapper, options) {
+var paletteIndexes = {
+	BGRW: 0,
+	monochrome: 1,
+	bidirectional: 2,
+	rainbow: 3
+};function create(elSliderWrapper, options) {
 	options = options || {};
 	options.orientation = options.orientation || 'horizontal';
+	function isHorizontal() {
+		return options.orientation === "horizontal";
+	}
+	if (options.direction === undefined) options.direction = true;
 	options.style = options.style || {};
-	options.style.width = options.style.width || (options.orientation === 'horizontal' ? 200 : 30);
-	options.style.height = options.style.height || (options.orientation === 'horizontal' ? 30 : 200);
-	if (elSliderWrapper instanceof HTMLDivElement !== true) {
+	options.style.width = options.style.width || (isHorizontal() ? 200 : 30);
+	options.style.height = options.style.height || (isHorizontal() ? 30 : 200);
+	options.onError = options.onError || function () {};
+	if (elSliderWrapper instanceof HTMLElement !== true) {
 		if (typeof elSliderWrapper !== "string") {
 			console.error('ColorPicker.create: invalid elSliderWrapper = ' + elSliderWrapper);
 			return;
@@ -380,126 +397,239 @@ function create(elSliderWrapper, options) {
 		}
 	}
 	elSliderWrapper.classList.add('slider-wrapper');
-	elSliderWrapper.style.width = options.style.width + 'px';
-	elSliderWrapper.style.height = options.style.height + 'px';
-	var slideElement = document.createElement('div');
-	elSliderWrapper.appendChild(slideElement);
+	for (var style in options.style) {
+		elSliderWrapper.style[style] = options.style[style];
+	}
+	function CreateSVGElement(el, attrs, children) {
+		el = document.createElementNS(svgNS, el);
+		for (var key in attrs) {
+			el.setAttribute(key, attrs[key]);
+		}if (Object.prototype.toString.call(children) != '[object Array]') children = [children];
+		var i = 0,
+		    len = children[0] && children.length || 0;
+		for (; i < len; i++) {
+			el.appendChild(children[i]);
+		}return el;
+	}
+	function Palette() {
+		function paletteitem(percent, r, g, b) {
+			return {
+				percent: percent,
+				r: r,
+				g: g,
+				b: b
+			};
+		}
+		if (options.palette === undefined) options.palette = paletteIndexes.BGRW;
+		var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0xFF),
+		new paletteitem(33, 0x00, 0xFF, 0x00),
+		new paletteitem(66, 0xFF, 0xFF, 0x00),
+		new paletteitem(100, 0xFF, 0xFF, 0xFF)];
+		switch (_typeof(options.palette)) {
+			case 'number':
+				switch (options.palette) {
+					case paletteIndexes.BGRW:
+						break;
+					case paletteIndexes.monochrome:
+						var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0x00),
+						new paletteitem(100, 0xFF, 0xFF, 0xFF)];
+						break;
+					case paletteIndexes.bidirectional:
+						var arrayPalette = [new paletteitem(0, 0xff, 0x00, 0x00),
+						new paletteitem(50, 0x00, 0x00, 0x00),
+						new paletteitem(100, 0x00, 0xFF, 0x00)];
+						break;
+					case paletteIndexes.rainbow:
+						var arrayPalette = [
+						new paletteitem(0, 0xff, 0x32, 0x32),
+						new paletteitem(16, 0xfc, 0xf5, 0x28),
+						new paletteitem(32, 0x28, 0xfc, 0x28),
+						new paletteitem(50, 0x28, 0xfc, 0xf8),
+						new paletteitem(66, 0x27, 0x2e, 0xf9),
+						new paletteitem(82, 0xff, 0x28, 0xfb),
+						new paletteitem(100, 0xff, 0x32, 0x32)];
+						break;
+					default:
+						console.error('ColorPicker.create.Palette: invalid options.palette = ' + options.palette);
+				}
+				break;
+			case "object":
+				if (Array.isArray(options.palette)) {
+					arrayPalette = options.palette;
+					break;
+				}
+			default:
+				var message = 'invalid options.palette = ' + options.palette;
+				console.error('ColorPicker.create.Palette: ' + message);
+				options.onError(message);
+		}
+		this.getPalette = function () {
+			var palette = [];
+			arrayPalette.forEach(function (item) {
+				palette.unshift(CreateSVGElement('stop', {
+					offset: 100 - item.percent + '%', 'stop-color': '#'
+					+ ("0" + Number(item.r).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.g).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.b).toString(16)).slice(-2).toUpperCase(),
+					'stop-opacity': '1'
+				}));
+			});
+			return palette;
+		};
+		this.hsv2rgb = function (stringPercent) {
+			var percent = parseFloat(stringPercent);
+			if (percent < 0) {
+				console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
+			} else if (percent > 100) {
+				console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
+			}
+			var lastPalette = arrayPalette[arrayPalette.length - 1];
+			if (lastPalette.percent !== 100) {
+				var lastItem = {};
+				Object.keys(lastPalette).forEach(function (key) {
+					lastItem[key] = lastPalette[key];
+				});
+				lastItem.percent = 100;
+				arrayPalette.push(lastItem);
+			}
+			var itemPrev;
+			for (var i = 0; i < arrayPalette.length; i++) {
+				var item = arrayPalette[i];
+				if (itemPrev === undefined) itemPrev = item;
+				if (percent >= itemPrev.percent && percent <= item.percent) {
+					var color = function color(percentPrev, prev, percentItem, item) {
+						var percentD = percentItem - percentPrev;
+						if (percentD === 0) return prev;
+						return Math.round(prev + (item - prev) / percentD * (percent - percentPrev));
+					};
+					var r = color(itemPrev.percent, itemPrev.r, item.percent, item.r),
+					    g = color(itemPrev.percent, itemPrev.g, item.percent, item.g),
+					    b = color(itemPrev.percent, itemPrev.b, item.percent, item.b);
+					return {
+						r: r,
+						g: g,
+						b: b,
+						hex: "#" + (16777216 | b | g << 8 | r << 16).toString(16).slice(1),
+						percent: percent
+					};
+				}
+				itemPrev = item;
+			}
+			var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
+			console.error('ColorPicker.Palette.hsv2rgb: ' + message);
+			options.onError(message);
+		};
+	}
+	var palette = new Palette();
+	var slide;
+	function getSlideHeight() {
+		if (typeof options.style.height === "string") return parseInt(options.style.height);
+		return options.style.height;
+	}
+	function getSlideWidth() {
+		if (typeof options.style.width === "string") return parseInt(options.style.width);
+		return options.style.width;
+	}
+	function setValue(value, position) {
+		if (slideIndicator === undefined) {
+			console.error('Set value of this instance of the ColorPicker is impossible because options.sliderIndicator is not defined.');
+			return;
+		}
+		var c = palette.hsv2rgb(value);
+		if (c === undefined) {
+			console.error('ColorPicker.setValue: invalud c = ' + c);
+			return;
+		}
+		value = c.percent;
+		if (position === undefined) position = isHorizontal() ? getSlideWidth() * value / 100 : getSlideHeight() - getSlideHeight() * (options.direction ? value : 100 - value) / 100;
+		positionIndicators(position);
+		if (options.sliderIndicator.callback !== undefined) {
+			options.sliderIndicator.callback(c);
+		}
+	}
 	var slideIndicator;
 	if (options.sliderIndicator !== undefined) {
 		slideIndicator = document.createElement('div');
 		slideIndicator.className = 'slider-indicator';
-		if (options.orientation === "horizontal") slideIndicator.style.width = '10px';else slideIndicator.style.height = '10px';
+		if (isHorizontal()) slideIndicator.style.width = '10px';else slideIndicator.style.height = '10px';
 		elSliderWrapper.appendChild(slideIndicator);
 		slideIndicator.style.pointerEvents = 'none';
 	}
-	function positionIndicators(mouseSlide) {
-		if (mouseSlide && slideIndicator !== undefined) {
-			if (options.orientation === "horizontal") {
-				slideIndicator.style.top = '0px';
-				slideIndicator.style.left = mouseSlide.x - slideIndicator.offsetWidth / 2 + 'px';
-			} else {
-				slideIndicator.style.left = '0px';
-				slideIndicator.style.top = mouseSlide.y - slideIndicator.offsetHeight / 2 + 'px';
+	function positionIndicators(position) {
+		if (slideIndicator === undefined) return;
+		if (isHorizontal()) {
+			if (position < 0 || position > getSlideWidth()) {
+				console.error('ColorPicker.positionIndicators: Invalid position = ' + position);
+				return;
 			}
+			slideIndicator.style.top = '0px';
+			slideIndicator.style.left = (options.direction ? position : getSlideWidth() - position) - slideIndicator.offsetWidth / 2 + 'px';
+		} else {
+			if (position < 0 || position > getSlideHeight()) {
+				console.error('ColorPicker.positionIndicators: Invalid position = ' + position);
+				return;
+			}
+			slideIndicator.style.left = '0px';
+			slideIndicator.style.top = position - slideIndicator.offsetHeight / 2 + 'px';
 		}
 	}
 	if (type == 'SVG') {
-		var $ = function $(el, attrs, children) {
-			el = document.createElementNS(svgNS, el);
-			for (var key in attrs) {
-				el.setAttribute(key, attrs[key]);
-			}if (Object.prototype.toString.call(children) != '[object Array]') children = [children];
-			var i = 0,
-			    len = children[0] && children.length || 0;
-			for (; i < len; i++) {
-				el.appendChild(children[i]);
-			}return el;
-		};
-		var Palette = function Palette() {
-			function paletteitem(percent, r, g, b) {
-				return {
-					percent: percent,
-					r: r,
-					g: g,
-					b: b
-				};
+		try {
+			var linearGradient = 'linearGradient';
+			slide = CreateSVGElement('svg', {
+				xmlns: 'http://www.w3.org/2000/svg',
+				version: '1.1',
+				width: options.style.width,
+				height: options.style.height
+			}, [CreateSVGElement('defs', {}, CreateSVGElement(linearGradient, {
+				id: 'gradient-hsv-' + uniqID,
+				x1: isHorizontal() && options.direction ? '100%' : '0%',
+				y1: !isHorizontal() && !options.direction ? '100%' : '0%',
+				x2: isHorizontal() && !options.direction ? '100%' : '0%',
+				y2: !isHorizontal() && options.direction ? '100%' : '0%'
+			}, palette.getPalette())), CreateSVGElement('rect', { x: '0', y: '0', width: '100%', height: '100%', fill: 'url(#gradient-hsv-' + uniqID + ')' })]);
+			if (slideIndicator !== undefined) {
+				slide.style.cursor = isHorizontal() ? 'e-resize' : 's-resize';
+				slideIndicator.style.cursor = slide.style.cursor;
 			}
-			var arrayPalette = [
-			new paletteitem(0, 0x00, 0x00, 0xFF),
-			new paletteitem(33, 0x00, 0xFF, 0x00),
-			new paletteitem(66, 0xFF, 0xFF, 0x00),
-			new paletteitem(100, 0xFF, 0xFF, 0xFF)];
-			this.getPalette = function () {
-				var palette = [];
-				arrayPalette.forEach(function (item) {
-					palette.unshift($('stop', {
-						offset: 100 - item.percent + '%', 'stop-color': '#'
-						+ ("0" + Number(item.r).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.g).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.b).toString(16)).slice(-2).toUpperCase(),
-						'stop-opacity': '1'
-					}));
-				});
-				return palette;
-			};
-			this.hsv2rgb = function (percent) {
-				if (percent < 0 || percent > 100) {
-					return;
-				}
-				var itemPrev;
-				for (var i = 0; i < arrayPalette.length; i++) {
-					var item = arrayPalette[i];
-					if (itemPrev === undefined) itemPrev = item;
-					if (percent >= itemPrev.percent && percent <= item.percent) {
-						var color = function color(percentPrev, prev, percentItem, item) {
-							var percentD = percentItem - percentPrev;
-							if (percentD === 0) return prev;
-							return prev + (item - prev) / percentD * (percent - percentPrev);
-						};
-						var r = color(itemPrev.percent, itemPrev.r, item.percent, item.r),
-						    g = color(itemPrev.percent, itemPrev.g, item.percent, item.g),
-						    b = color(itemPrev.percent, itemPrev.b, item.percent, item.b);
-						return {
-							r: r,
-							g: g,
-							b: b,
-							hex: "#" + (16777216 | b | g << 8 | r << 16).toString(16).slice(1), percent: percent
-						};
-					}
-					itemPrev = item;
-				}
-			};
-		};
-		var palette = new Palette();
-		var slide = $('svg', {
-			xmlns: 'http://www.w3.org/2000/svg',
-			version: '1.1',
-			width: '100%',
-			height: '100%'
-		}, [$('defs', {}, $('linearGradient', {
-			id: 'gradient-hsv',
-			x1: options.orientation === "horizontal" ? '100%' : '0%',
-			y1: options.orientation === "horizontal" ? '0%' : '100%',
-			x2: '0%',
-			y2: '0%'
-		}, palette.getPalette())), $('rect', { x: '0', y: '0', width: '100%', height: '100%', fill: 'url(#gradient-hsv)' })]);
-		slide.style.cursor = options.orientation === "horizontal" ? 'e-resize' : 's-resize';
-		if (slideIndicator !== undefined) slideIndicator.style.cursor = slide.style.cursor;
-		var slideClone = slide.cloneNode(true);
-		var hsvGradient = slideClone.getElementsByTagName('linearGradient')[0];
-		var hsvRect = slideClone.getElementsByTagName('rect')[0];
-		hsvGradient.id = 'gradient-hsv-' + uniqID;
-		hsvRect.setAttribute('fill', 'url(#' + hsvGradient.id + ')');
-		slideElement.appendChild(slideClone);
-		slideClone.style.height = elSliderWrapper.offsetHeight + 'px';
-		positionIndicators({ x: 0, y: 0 });
+		} catch (e) {
+			console.error('Create SVG element failed! ' + e.message);
+		}
+		elSliderWrapper.appendChild(slide);
+		elSliderWrapper.style.height = getSlideHeight() + 'px';
 		if (slideIndicator !== undefined) {
-			if (options.orientation === "horizontal") slideIndicator.style.height = options.style.height - 2 + 'px';else slideIndicator.style.width = options.style.width - 2 + 'px';
+			if (isHorizontal()) slideIndicator.style.height = parseInt(options.style.height) - 2 + 'px';else slideIndicator.style.width = parseInt(options.style.width) - 2 + 'px';
+			options.sliderIndicator.value = options.sliderIndicator.value || 0;
+			setValue(options.sliderIndicator.value);
 		}
 		uniqID++;
 	} else {
 		console.error('Under constraction');
 	}
+	function mouseMove(mouse) {
+		mouse.x = parseInt(mouse.x);
+		mouse.y = parseInt(mouse.y);
+		var position, size, value;
+		if (isHorizontal()) {
+			position = mouse.x;
+			size = getSlideWidth() - 1;
+			if (position >= getSlideWidth()) position = size;
+			value = position * 100 / size;
+			if (!options.direction) {
+				value = 100 - value;
+				position = size - position;
+			}
+		} else {
+			position = mouse.y;
+			size = getSlideHeight() - 1;
+			if (position >= getSlideHeight()) position = size;
+			value = (1 - position / size) * 100;
+			if (!options.direction) {
+				value = 100 - value;
+			}
+		}
+		setValue(value, position);
+	}
 	if (slideIndicator !== undefined) {
-		var slideListener = function slideListener(ctx) {
+		var slideListener = function slideListener() {
 			return function (evt) {
 				if (mouseout) return;
 				evt = evt || window.event;
@@ -513,19 +643,7 @@ function create(elSliderWrapper, options) {
 					var wrapper = evt.target.parentNode.parentNode;
 					return { x: evt.layerX - wrapper.offsetLeft, y: evt.layerY - wrapper.offsetTop };
 				}
-				var mouse = mousePosition(evt),
-				    mousePosition = mouse.x;
-				ctx.h = mousePosition / slideElement.offsetWidth * 360;
-				function hsv2rgb(hsv) {
-					return palette.hsv2rgb(hsv.h * 100 / 360);
-				}
-				var c = hsv2rgb({ h: ctx.h, s: ctx.s, v: ctx.v });
-				if (c !== undefined) {
-					positionIndicators(mouse);
-					if (options.sliderIndicator.callback !== undefined) {
-						options.sliderIndicator.callback(c);
-					}
-				}
+				mouseMove(mousePosition(evt));
 			};
 		};
 		var addEventListener = function addEventListener(element, event, listener) {
@@ -537,7 +655,20 @@ function create(elSliderWrapper, options) {
 			}
 		};
 		var enableDragging = function enableDragging(ctx, listener) {
-			var element = slideElement;
+			var element = slide;
+			addEventListener(element, 'touchstart', function (evt) {
+			});
+			addEventListener(element, 'touchmove', function (evt) {
+				evt.preventDefault();
+				var rect = evt.srcElement.getBoundingClientRect(),
+				    x = evt.touches[0].clientX - rect.left,
+				    y = evt.touches[0].clientY - rect.top;
+				if (x < 0) x = 0;
+				if (y < 0) y = 0;
+				mouseMove({ x: x, y: y });
+			});
+			addEventListener(element, 'touchend', function (evt) {
+			});
 			addEventListener(element, 'mousedown', function (evt) {
 				var mouseup = 'mouseup',
 				    mousemove = 'mousemove';
@@ -564,10 +695,13 @@ function create(elSliderWrapper, options) {
 			});
 		};
 		var mouseout = false;
-		addEventListener(slideElement, 'click', slideListener(this));
-		enableDragging(this, slideListener(this));
+		addEventListener(slide, 'click', slideListener());
+		enableDragging(this, slideListener());
 	}
+	return {
+		setValue: setValue
+	};
 }
 
-export { create };
+export { paletteIndexes, create };
 //# sourceMappingURL=colorpicker.module.js.map
