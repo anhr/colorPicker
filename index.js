@@ -598,7 +598,7 @@ export function create( elSliderWrapper, options ) {
 					return { x: evt.layerX - wrapper.offsetLeft, y: evt.layerY - wrapper.offsetTop };
 				}
 
-console.warn( 'evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY );
+//console.warn( 'evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY );
 				mouseMove( mousePosition( evt ) );
 
 			}
