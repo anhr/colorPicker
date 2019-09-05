@@ -22,9 +22,9 @@ var optionsStyle = {
 	tag: 'style'
 
 }
-//loadScript.sync( 'https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle );
+loadScript.sync( 'https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle );
 //loadScript.sync( 'http://localhost/threejs/nodejs/colorpicker/colorpicker.css', optionsStyle );
-loadScript.sync( '../colorpicker.css', optionsStyle );
+//loadScript.sync( '../colorpicker.css', optionsStyle );
 
 var type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
 //	hueOffset = 15,

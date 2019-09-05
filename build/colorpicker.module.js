@@ -365,7 +365,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  */
 var optionsStyle = {
 	tag: 'style'
-};loadScript.sync('../colorpicker.css', optionsStyle);
+};
+loadScript.sync('https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle);
 var type = window.SVGAngle || document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? "SVG" : "VML";
 var svgNS = 'http://www.w3.org/2000/svg';
 var uniqID = 0;
@@ -436,18 +437,12 @@ var paletteIndexes = {
 						break;
 					case paletteIndexes.bidirectional:
 						var arrayPalette = [new paletteitem(0, 0xff, 0x00, 0x00),
-						new paletteitem(50, 0x00, 0x00, 0x00),
+						new paletteitem(50, 0x00, 0x00, 0xFF),
 						new paletteitem(100, 0x00, 0xFF, 0x00)];
 						break;
 					case paletteIndexes.rainbow:
 						var arrayPalette = [
-						new paletteitem(0, 0xff, 0x32, 0x32),
-						new paletteitem(16, 0xfc, 0xf5, 0x28),
-						new paletteitem(32, 0x28, 0xfc, 0x28),
-						new paletteitem(50, 0x28, 0xfc, 0xf8),
-						new paletteitem(66, 0x27, 0x2e, 0xf9),
-						new paletteitem(82, 0xff, 0x28, 0xfb),
-						new paletteitem(100, 0xff, 0x32, 0x32)];
+						new paletteitem(0, 0xff, 0x32, 0x32), new paletteitem(16, 0xfc, 0xf5, 0x28), new paletteitem(32, 0x28, 0xfc, 0x28), new paletteitem(50, 0x28, 0xfc, 0xf8), new paletteitem(66, 0x27, 0x2e, 0xf9), new paletteitem(82, 0xff, 0x28, 0xfb), new paletteitem(100, 0xff, 0x32, 0x32)];
 						break;
 					default:
 						console.error('ColorPicker.create.Palette: invalid options.palette = ' + options.palette);
@@ -643,6 +638,7 @@ var paletteIndexes = {
 					var wrapper = evt.target.parentNode.parentNode;
 					return { x: evt.layerX - wrapper.offsetLeft, y: evt.layerY - wrapper.offsetTop };
 				}
+				console.warn('evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY);
 				mouseMove(mousePosition(evt));
 			};
 		};
