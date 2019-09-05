@@ -75,6 +75,38 @@ $ npm run build
 
 - npm run build - Build development and production version of scripts.
 
+## On the following browsers have been successfully tested:
+
+Windows 10
+
+	IE 11
+
+	Microsoft Edge 42
+
+	Chrome 76
+
+	Opera 63
+
+	Safari 5.1.7 
+
+	FireFox 68
+
+Android 6.0.1
+
+	Chrome 74 
+
+	Samsung Galaxy S5 Internet 9.4
+
+	FireFox 68.1
+
+	Opera 53
+
+	Opera Mini 44
+
+LG Smart tv
+
+	Chrome 
+
 ## Thanks
 The following libraries / open-source projects were used in the development of ColorPicker:
  * [FlexiColorPicker](https://github.com/DavidDurman/FlexiColorPicker)
