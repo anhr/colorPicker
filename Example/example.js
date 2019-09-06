@@ -18,18 +18,18 @@ function example( ColorPicker ) {
 	ColorPicker.create( document.getElementById( "colorpicker" ) );
 
 	//Horizontal Colorpicker with slider indicator
-	var elValue2 = document.getElementById( 'value2' );
-	var colorpicker2 = ColorPicker.create( document.getElementById( "colorpicker2" ), {
+	var elValueHI = document.getElementById( 'valueHI' );
+	var colorpickerHI = ColorPicker.create( document.getElementById( "colorpickerHI" ), {
 
 		//direction: false,
 		sliderIndicator: {
 			callback: function ( c ) {
 
 				//console.warn( 'callback: ' + c.percent + ' percent c.hex = ' + c.hex );
-				var elColor2 = document.getElementById( 'color2' );
-				elColor2.style.backgroundColor = c.hex;
-				document.getElementById( 'color2text' ).innerHTML = c.hex;
-				elValue2.value = c.percent; 
+				var elColorHI = document.getElementById( 'colorHI' );
+				elColorHI.style.backgroundColor = c.hex;
+				document.getElementById( 'colorHItext' ).innerHTML = c.hex;
+				elValueHI.value = c.percent; 
 
 			},
 			value: 75,//percent
@@ -47,9 +47,9 @@ function example( ColorPicker ) {
 		onError: function ( message ) { alert( 'Horizontal Colorpicker with slider indicator error: ' + message ); }
 
 	} );
-	document.getElementById( 'enterValue2' ).onclick = function () {
+	document.getElementById( 'enterValueHI' ).onclick = function () {
 
-		colorpicker2.setValue( elValue2.value );
+		colorpickerHI.setValue( elValueHI.value );
 
 	}
 
