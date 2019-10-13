@@ -84,8 +84,8 @@ function example( ColorPicker ) {
 		style: {
 
 			border: '1px solid black',
-			width: 10,
-			height: 100,
+			width: '10px',
+			height: '100px',
 
 		},
 		*/
@@ -154,8 +154,8 @@ function example( ColorPicker ) {
 		style: {
 
 			border: '1px solid black',
-			width: 10,
-			height: 100,
+			width: '10px',
+			height: '100px',
 
 		},
 		onError: function ( message ) { alert( 'Vertical Colorpicker with direction from up to down error: ' + message ); }
@@ -187,7 +187,7 @@ function example( ColorPicker ) {
 		style: {
 
 			border: '1px solid black',
-			//width: 10,
+			width: '100%',//'100px',
 			//height: 100,
 
 		},
@@ -220,8 +220,8 @@ function example( ColorPicker ) {
 		style: {
 
 			//border: '1px solid black',
-			//width: 10,
-			//height: 100,
+			//width: '10px',
+			//height: '100px',
 
 		},
 		onError: function ( message ) { 'Bidirectional palette error: ' + alert( message ); }
@@ -253,8 +253,8 @@ function example( ColorPicker ) {
 		style: {
 
 			border: '1px solid black',
-			//width: 10,
-			//height: 100,
+			//width: '10px',
+			//height: '100px',
 
 		},
 		onError: function ( message ) { alert( 'Rainbow palette error: ' + message ); }
@@ -296,8 +296,8 @@ function example( ColorPicker ) {
 		style: {
 
 			border: '1px solid black',
-			//width: 10,
-			//height: 100,
+			//width: '10px',
+			//height: '100px',
 
 		},
 		onError: function ( message ) { alert( 'Custom palette error: ' + message ); }

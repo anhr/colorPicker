@@ -17,9 +17,9 @@
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
 
 //local version
-//import loadScript from '../loadScriptNodeJS/loadScript.js';
+import loadScript from '../loadScriptNodeJS/loadScript.js';
 
-import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
+//import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
 
 var optionsStyle = {
@@ -35,6 +35,10 @@ loadScript.sync( 'https://raw.githack.com/anhr/colorPicker/master/colorpicker.cs
 var type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
 //	hueOffset = 15,
 	svgNS = 'http://www.w3.org/2000/svg', uniqID = 0;
+
+/**
+ * enumeration of available palettes.
+*/
 export var paletteIndexes = {
 
 	BGRW: 0,//blue, green, red, white palette
@@ -65,10 +69,19 @@ export var paletteIndexes = {
  * creates an instance of ColorPicker
  * @param {string|HTMLElement} elSliderWrapper id of the ColorPicker element or ColorPicker element
  * @param {object} [options] followed options is availablee
- * @param {number|object[]} [options.palette] Palette index or palette array. The following indexes are available:
- * 0 - blue, green, red, white palette.
- * Default is 0 index
+ * @param {number|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
+ * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
+ * paletteIndexes.monochrome: 1,
+ * paletteIndexes.bidirectional: 2,//red, black, green
+ * paletteIndexes.rainbow: 3,
+ * Default is paletteIndexes.BGRW index
  * Example of palette array:
+[
+	{ percent: 0, r: 0, g: 0, b: 0, },
+	{ percent: 10, r: 0xff, g: 255, b: 0xff, },
+	{ percent: 100, r: 0xff, g: 255, b: 0xff, },
+]
+ * Palette see function Palette( options ) for details
  * @param {object} [options.orientation] orientation of the element. Available "horizontal" or "vertical" orientation
  * @param {object} [options.direction] true - position of the mouse pointer relative left side for 'horizontal' slider
  * or bottom side for 'vertical' slider in the percents.
@@ -129,207 +142,7 @@ export function create( elSliderWrapper, options ) {
 
 //	var slideElement = elSliderWrapper;
 
-	/**
-	 * Create SVG element.
-	 */
-	function CreateSVGElement( el, attrs, children ) {
-
-		//			console.warn( 'CreateSVGElement ' + el );
-		el = document.createElementNS( svgNS, el );
-		for ( var key in attrs )
-			el.setAttribute( key, attrs[key] );
-		if ( Object.prototype.toString.call( children ) != '[object Array]' ) children = [children];
-		var i = 0, len = ( children[0] && children.length ) || 0;
-		for ( ; i < len; i++ )
-			el.appendChild( children[i] );
-		return el;
-	}
-
-	function Palette() {
-
-		function paletteitem( percent, r, g, b ) {
-
-			return {
-
-				percent: percent,
-				r: r,
-				g: g,
-				b: b,
-
-			}
-
-		}
-		if ( options.palette === undefined)
-			options.palette = paletteIndexes.BGRW;
-		var arrayPalette = [
-
-			new paletteitem( 0, 0x00, 0x00, 0xFF ),//blue
-			new paletteitem( 33, 0x00, 0xFF, 0x00 ),//green
-			new paletteitem( 66, 0xFF, 0xFF, 0x00 ),//red
-			new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
-
-		];
-		switch ( typeof options.palette ) {
-
-			case 'number':
-				switch ( options.palette ) {
-
-					case paletteIndexes.BGRW:
-						break;//default palette
-					case paletteIndexes.monochrome:
-						var arrayPalette = [
-
-							new paletteitem( 0, 0x00, 0x00, 0x00 ),//blach
-							//new paletteitem( 10, 0x80, 0x80, 0x80 ),//gray
-							new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
-
-						];
-						break;
-					case paletteIndexes.bidirectional:
-						var arrayPalette = [
-
-							new paletteitem( 0, 0xff, 0x00, 0x00 ),//red
-							new paletteitem( 50, 0x00, 0x00, 0xFF ),//black
-							new paletteitem( 100, 0x00, 0xFF, 0x00 ),//green
-
-						];
-						break;
-					case paletteIndexes.rainbow:
-						var arrayPalette = [
-
-							/*
-													new paletteitem(   0, 0xff, 0x00, 0x00 ),//red
-													new paletteitem(  50, 0x00, 0xff, 0x00 ),//green
-													new paletteitem( 100, 0x00, 0x00, 0xff ),//blue
-							*/
-							new paletteitem( 0, 0xff, 0x32, 0x32 ),
-							new paletteitem( 16, 0xfc, 0xf5, 0x28 ),
-							new paletteitem( 32, 0x28, 0xfc, 0x28 ),
-							new paletteitem( 50, 0x28, 0xfc, 0xf8 ),
-							new paletteitem( 66, 0x27, 0x2e, 0xf9 ),
-							new paletteitem( 82, 0xff, 0x28, 0xfb ),
-							new paletteitem( 100, 0xff, 0x32, 0x32 ),
-
-						];
-						break;
-					default: console.error( 'ColorPicker.create.Palette: invalid options.palette = ' + options.palette );
-
-				}
-				break;
-			case "object":
-				if ( Array.isArray( options.palette ) ) {
-
-					//Custom palette
-					arrayPalette = options.palette;
-					break;
-
-				}
-			default:
-				var message = 'invalid options.palette = ' + options.palette;
-				console.error( 'ColorPicker.create.Palette: ' + message );
-				options.onError( message );
-
-		}
-		this.getPalette = function () {
-
-			var palette = [];
-			arrayPalette.forEach( function ( item ) {
-
-				palette.unshift( CreateSVGElement( 'stop', {
-
-					offset: ( 100 - item.percent ) + '%', 'stop-color': '#'
-						//Thanks to https://stackoverflow.com/a/13240395/5175935
-						+ ( "0" + ( Number( item.r ).toString( 16 ) ) ).slice( -2 ).toUpperCase()
-						+ ( "0" + ( Number( item.g ).toString( 16 ) ) ).slice( -2 ).toUpperCase()
-						+ ( "0" + ( Number( item.b ).toString( 16 ) ) ).slice( -2 ).toUpperCase(),
-					'stop-opacity': '1'
-
-				} ) );
-
-			} );
-			return palette;
-
-		}
-		this.hsv2rgb = function ( stringPercent ) {
-
-			var percent = parseFloat( stringPercent );
-			//console.warn( 'percent = ' + stringPercent );
-			if ( percent < 0 ) {
-
-				console.error( 'Palette.hsv2rgb: invalid percent = ' + stringPercent );
-//				percent = 0;
-
-			}
-			else if ( percent > 100 ) {
-
-				console.error( 'Palette.hsv2rgb: invalid percent = ' + stringPercent );
-//				percent = 100;
-
-			}
-			var lastPalette = arrayPalette[arrayPalette.length - 1];
-			if ( lastPalette.percent !== 100 ) {
-
-				//not compatible with Safari for Windows
-				//var lastItem = Object.assign( {}, arrayPalette[arrayPalette.length - 1] );
-
-				var lastItem = {};
-				Object.keys( lastPalette ).forEach( function ( key ) {
-
-					lastItem[key] = lastPalette[key];
-
-				} );
-				lastItem.percent = 100;
-				arrayPalette.push( lastItem );
-
-			}
-			var itemPrev;
-			for ( var i = 0; i < arrayPalette.length; i++ ) {
-
-				var item = arrayPalette[i];
-				if ( itemPrev === undefined )
-					itemPrev = item;
-/*
-				var item = Object.assign( {}, arrayPalette[i] );//arrayPalette[i];
-				if ( itemPrev === undefined )
-					itemPrev = Object.assign( {}, item );//itemPrev = item;
-				if ( arrayPalette.length === ( i + 1 ) )
-					item.percent = 100;
-*/
-				if ( ( ( percent >= itemPrev.percent ) && ( percent <= item.percent ) ) ) {
-
-					function color( percentPrev, prev, percentItem, item ) {
-
-						var percentD = percentItem - percentPrev;
-						if ( percentD === 0 )
-							return prev;
-						return Math.round( prev + ( ( item - prev ) / percentD ) * ( percent - percentPrev ) );
-
-					}
-					var r = color( itemPrev.percent, itemPrev.r, item.percent, item.r ),
-						g = color( itemPrev.percent, itemPrev.g, item.percent, item.g ),
-						b = color( itemPrev.percent, itemPrev.b, item.percent, item.b );
-					return {
-
-						r: r,
-						g: g,
-						b: b,
-						hex: "#" + ( 16777216 | b | ( g << 8 ) | ( r << 16 ) ).toString( 16 ).slice( 1 ),
-						percent: percent
-
-					};
-
-				}
-				itemPrev = item;
-
-			}
-			var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
-			console.error( 'ColorPicker.Palette.hsv2rgb: ' + message );
-			options.onError( message );
-
-		}
-
-	}
-	var palette = new Palette();
+	var palette = options.palette instanceof Palette ? options.palette : new Palette( options );
 	var slide;
 	function getSlideHeight() {
 
@@ -341,14 +154,18 @@ export function create( elSliderWrapper, options ) {
 	}
 	function getSlideWidth() {
 
+		/*Это не работает когда ширину задаю в процентах
 		if ( typeof options.style.width === "string" )
 			return parseInt( options.style.width );
 		return options.style.width;
+		*/
 
 		//это не работает когда хочу установить начальное положение ползунка во время создания ColorPicker
 		//потому что к этому времени ширина ColorPicker еще не вычислена.
 		//Причем во время отладки, когда ставлю стоп, ширина уже успевает вычисляться и все работает.
-//		return slide.querySelector( 'rect' ).width.baseVal.value;
+		//return slide.querySelector( 'rect' ).width.baseVal.value;
+
+		return slide.clientWidth;
 
 	}
 	/**
@@ -450,7 +267,7 @@ export function create( elSliderWrapper, options ) {
 			slide = CreateSVGElement( 'svg', {
 				xmlns: 'http://www.w3.org/2000/svg',
 				version: '1.1',
-				width: options.style.width,
+				width: isHorizontal() ? '100%' : options.style.width,
 				height: options.style.height,
 			},
 				[
@@ -705,3 +522,226 @@ export function create( elSliderWrapper, options ) {
 
 	};
 }
+
+
+/**
+ * Create SVG element.
+ */
+function CreateSVGElement( el, attrs, children ) {
+
+	//			console.warn( 'CreateSVGElement ' + el );
+	el = document.createElementNS( svgNS, el );
+	for ( var key in attrs )
+		el.setAttribute( key, attrs[key] );
+	if ( Object.prototype.toString.call( children ) != '[object Array]' ) children = [children];
+	var i = 0, len = ( children[0] && children.length ) || 0;
+	for ( ; i < len; i++ )
+		el.appendChild( children[i] );
+	return el;
+}
+
+export function Palette( options ) {
+
+	function paletteitem( percent, r, g, b ) {
+
+		return {
+
+			percent: percent,
+			r: r,
+			g: g,
+			b: b,
+
+		}
+
+	}
+
+	options = options || {};
+	if ( options.palette === undefined )
+		options.palette = paletteIndexes.BGRW;
+
+	var arrayPalette = [
+
+		new paletteitem( 0, 0x00, 0x00, 0xFF ),//blue
+		new paletteitem( 33, 0x00, 0xFF, 0x00 ),//green
+		new paletteitem( 66, 0xFF, 0xFF, 0x00 ),//red
+		new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
+
+	];
+	switch ( typeof options.palette ) {
+
+		case 'number':
+			switch ( options.palette ) {
+
+				case paletteIndexes.BGRW:
+					break;//default palette
+				case paletteIndexes.monochrome:
+					var arrayPalette = [
+
+						new paletteitem( 0, 0x00, 0x00, 0x00 ),//blach
+						//new paletteitem( 10, 0x80, 0x80, 0x80 ),//gray
+						new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
+
+					];
+					break;
+				case paletteIndexes.bidirectional:
+					var arrayPalette = [
+/*
+						new paletteitem( 0, 0xff, 0x00, 0x00 ),//red
+						new paletteitem( 50, 0x00, 0x00, 0xFF ),//blue
+						new paletteitem( 100, 0x00, 0xFF, 0x00 ),//green
+*/
+						new paletteitem( 0, 0xff, 0x30, 0x30 ),//red
+						new paletteitem( 50, 0x30, 0x30, 0x30 ),//gray
+						new paletteitem( 100, 0x30, 0xFF, 0x30 ),//green
+
+					];
+					break;
+				case paletteIndexes.rainbow:
+					var arrayPalette = [
+
+						/*
+												new paletteitem(   0, 0xff, 0x00, 0x00 ),//red
+												new paletteitem(  50, 0x00, 0xff, 0x00 ),//green
+												new paletteitem( 100, 0x00, 0x00, 0xff ),//blue
+						*/
+						new paletteitem( 0, 0xff, 0x32, 0x32 ),
+						new paletteitem( 16, 0xfc, 0xf5, 0x28 ),
+						new paletteitem( 32, 0x28, 0xfc, 0x28 ),
+						new paletteitem( 50, 0x28, 0xfc, 0xf8 ),
+						new paletteitem( 66, 0x27, 0x2e, 0xf9 ),
+						new paletteitem( 82, 0xff, 0x28, 0xfb ),
+						new paletteitem( 100, 0xff, 0x32, 0x32 ),
+
+					];
+					break;
+				default: console.error( 'ColorPicker.create.Palette: invalid options.palette = ' + options.palette );
+
+			}
+			break;
+		case "object":
+			if ( Array.isArray( options.palette ) ) {
+
+				//Custom palette
+				arrayPalette = options.palette;
+				break;
+
+			}
+		default:
+			var message = 'invalid options.palette = ' + options.palette;
+			console.error( 'ColorPicker.create.Palette: ' + message );
+			options.onError( message );
+
+	}
+	this.getPalette = function () {
+
+		var palette = [];
+		arrayPalette.forEach( function ( item ) {
+
+			palette.unshift( CreateSVGElement( 'stop', {
+
+				offset: ( 100 - item.percent ) + '%', 'stop-color': '#'
+					//Thanks to https://stackoverflow.com/a/13240395/5175935
+					+ ( "0" + ( Number( item.r ).toString( 16 ) ) ).slice( -2 ).toUpperCase()
+					+ ( "0" + ( Number( item.g ).toString( 16 ) ) ).slice( -2 ).toUpperCase()
+					+ ( "0" + ( Number( item.b ).toString( 16 ) ) ).slice( -2 ).toUpperCase(),
+				'stop-opacity': '1'
+
+			} ) );
+
+		} );
+		return palette;
+
+	}
+	this.hsv2rgb = function ( stringPercent, min, max ) {
+
+		var percent = parseFloat( stringPercent );
+		//console.warn( 'percent = ' + stringPercent );
+		if ( min !== undefined && max !== undefined )
+			percent = ( 100 / ( max - min ) ) * ( percent - min );
+/*
+		if ( percent < 0 ) {
+
+			console.error( 'Palette.hsv2rgb: invalid percent = ' + percent );
+			percent = 0;
+
+		}
+		else if ( percent > 100 ) {
+
+			console.error( 'Palette.hsv2rgb: invalid percent = ' + percent );
+			percent = 100;
+
+		}
+*/
+		var lastPalette = arrayPalette[arrayPalette.length - 1];
+		if ( lastPalette.percent !== 100 ) {
+
+			//not compatible with Safari for Windows
+			//var lastItem = Object.assign( {}, arrayPalette[arrayPalette.length - 1] );
+
+			var lastItem = {};
+			Object.keys( lastPalette ).forEach( function ( key ) {
+
+				lastItem[key] = lastPalette[key];
+
+			} );
+			lastItem.percent = 100;
+			arrayPalette.push( lastItem );
+
+		}
+		var itemPrev;
+		for ( var i = 0; i < arrayPalette.length; i++ ) {
+
+			var item = arrayPalette[i];
+			if ( itemPrev === undefined )
+				itemPrev = item;
+			/*
+							var item = Object.assign( {}, arrayPalette[i] );//arrayPalette[i];
+							if ( itemPrev === undefined )
+								itemPrev = Object.assign( {}, item );//itemPrev = item;
+							if ( arrayPalette.length === ( i + 1 ) )
+								item.percent = 100;
+			*/
+			if ( ( ( percent >= itemPrev.percent ) && ( percent <= item.percent ) ) ) {
+
+				function color( percentPrev, prev, percentItem, item ) {
+
+					var percentD = percentItem - percentPrev;
+					if ( percentD === 0 )
+						return prev;
+					return Math.round( prev + ( ( item - prev ) / percentD ) * ( percent - percentPrev ) );
+
+				}
+				var r = color( itemPrev.percent, itemPrev.r, item.percent, item.r ),
+					g = color( itemPrev.percent, itemPrev.g, item.percent, item.g ),
+					b = color( itemPrev.percent, itemPrev.b, item.percent, item.b );
+				return {
+
+					r: r,
+					g: g,
+					b: b,
+					hex: "#" + ( 16777216 | b | ( g << 8 ) | ( r << 16 ) ).toString( 16 ).slice( 1 ),
+//					color = new Color( "rgb(" + r + ", " + g + ", " + b + ")" ),
+					percent: percent
+
+				};
+
+			}
+			itemPrev = item;
+
+		}
+/*
+		var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
+		console.error( 'ColorPicker.Palette.hsv2rgb: ' + message );
+*/
+		if ( options.onError !== undefined )
+			options.onError( 'Invalid color value of the ColorPicker: ' + stringPercent );
+
+	}
+
+}
+/**
+ * converts a value in percentages to color
+ * @param {number} value coordinate of color from palette in percent
+ * @returns {object} color
+ */
+//export function toColor( value ) { return palette.hsv2rgb( value ); }

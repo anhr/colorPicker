@@ -15,7 +15,7 @@
  *
  */
 
-import { create, paletteIndexes } from './index.js';
+import { create, paletteIndexes, Palette } from './index.js';
 /**
  * pure JavaScript color picker without using images, external CSS or 1px divs.
  */
@@ -23,6 +23,7 @@ var ColorPicker = {
 
 	create: create,
 	paletteIndexes: paletteIndexes,
+	palette: Palette,
 
 }
 export default ColorPicker;

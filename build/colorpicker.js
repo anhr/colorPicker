@@ -407,127 +407,14 @@ var paletteIndexes = {
 	for (var style in options.style) {
 		elSliderWrapper.style[style] = options.style[style];
 	}
-	function CreateSVGElement(el, attrs, children) {
-		el = document.createElementNS(svgNS, el);
-		for (var key in attrs) {
-			el.setAttribute(key, attrs[key]);
-		}if (Object.prototype.toString.call(children) != '[object Array]') children = [children];
-		var i = 0,
-		    len = children[0] && children.length || 0;
-		for (; i < len; i++) {
-			el.appendChild(children[i]);
-		}return el;
-	}
-	function Palette() {
-		function paletteitem(percent, r, g, b) {
-			return {
-				percent: percent,
-				r: r,
-				g: g,
-				b: b
-			};
-		}
-		if (options.palette === undefined) options.palette = paletteIndexes.BGRW;
-		var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0xFF),
-		new paletteitem(33, 0x00, 0xFF, 0x00),
-		new paletteitem(66, 0xFF, 0xFF, 0x00),
-		new paletteitem(100, 0xFF, 0xFF, 0xFF)];
-		switch (_typeof(options.palette)) {
-			case 'number':
-				switch (options.palette) {
-					case paletteIndexes.BGRW:
-						break;
-					case paletteIndexes.monochrome:
-						var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0x00),
-						new paletteitem(100, 0xFF, 0xFF, 0xFF)];
-						break;
-					case paletteIndexes.bidirectional:
-						var arrayPalette = [new paletteitem(0, 0xff, 0x00, 0x00),
-						new paletteitem(50, 0x00, 0x00, 0xFF),
-						new paletteitem(100, 0x00, 0xFF, 0x00)];
-						break;
-					case paletteIndexes.rainbow:
-						var arrayPalette = [
-						new paletteitem(0, 0xff, 0x32, 0x32), new paletteitem(16, 0xfc, 0xf5, 0x28), new paletteitem(32, 0x28, 0xfc, 0x28), new paletteitem(50, 0x28, 0xfc, 0xf8), new paletteitem(66, 0x27, 0x2e, 0xf9), new paletteitem(82, 0xff, 0x28, 0xfb), new paletteitem(100, 0xff, 0x32, 0x32)];
-						break;
-					default:
-						console.error('ColorPicker.create.Palette: invalid options.palette = ' + options.palette);
-				}
-				break;
-			case "object":
-				if (Array.isArray(options.palette)) {
-					arrayPalette = options.palette;
-					break;
-				}
-			default:
-				var message = 'invalid options.palette = ' + options.palette;
-				console.error('ColorPicker.create.Palette: ' + message);
-				options.onError(message);
-		}
-		this.getPalette = function () {
-			var palette = [];
-			arrayPalette.forEach(function (item) {
-				palette.unshift(CreateSVGElement('stop', {
-					offset: 100 - item.percent + '%', 'stop-color': '#'
-					+ ("0" + Number(item.r).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.g).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.b).toString(16)).slice(-2).toUpperCase(),
-					'stop-opacity': '1'
-				}));
-			});
-			return palette;
-		};
-		this.hsv2rgb = function (stringPercent) {
-			var percent = parseFloat(stringPercent);
-			if (percent < 0) {
-				console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
-			} else if (percent > 100) {
-				console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
-			}
-			var lastPalette = arrayPalette[arrayPalette.length - 1];
-			if (lastPalette.percent !== 100) {
-				var lastItem = {};
-				Object.keys(lastPalette).forEach(function (key) {
-					lastItem[key] = lastPalette[key];
-				});
-				lastItem.percent = 100;
-				arrayPalette.push(lastItem);
-			}
-			var itemPrev;
-			for (var i = 0; i < arrayPalette.length; i++) {
-				var item = arrayPalette[i];
-				if (itemPrev === undefined) itemPrev = item;
-				if (percent >= itemPrev.percent && percent <= item.percent) {
-					var color = function color(percentPrev, prev, percentItem, item) {
-						var percentD = percentItem - percentPrev;
-						if (percentD === 0) return prev;
-						return Math.round(prev + (item - prev) / percentD * (percent - percentPrev));
-					};
-					var r = color(itemPrev.percent, itemPrev.r, item.percent, item.r),
-					    g = color(itemPrev.percent, itemPrev.g, item.percent, item.g),
-					    b = color(itemPrev.percent, itemPrev.b, item.percent, item.b);
-					return {
-						r: r,
-						g: g,
-						b: b,
-						hex: "#" + (16777216 | b | g << 8 | r << 16).toString(16).slice(1),
-						percent: percent
-					};
-				}
-				itemPrev = item;
-			}
-			var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
-			console.error('ColorPicker.Palette.hsv2rgb: ' + message);
-			options.onError(message);
-		};
-	}
-	var palette = new Palette();
+	var palette = new Palette(options);
 	var slide;
 	function getSlideHeight() {
 		if (typeof options.style.height === "string") return parseInt(options.style.height);
 		return options.style.height;
 	}
 	function getSlideWidth() {
-		if (typeof options.style.width === "string") return parseInt(options.style.width);
-		return options.style.width;
+		return slide.clientWidth;
 	}
 	function setValue(value, position) {
 		if (slideIndicator === undefined) {
@@ -543,6 +430,7 @@ var paletteIndexes = {
 		if (position === undefined) position = isHorizontal() ? getSlideWidth() * value / 100 : getSlideHeight() - getSlideHeight() * (options.direction ? value : 100 - value) / 100;
 		positionIndicators(position);
 		if (options.sliderIndicator.callback !== undefined) {
+			var ttt = getSlideWidth();
 			options.sliderIndicator.callback(c);
 		}
 	}
@@ -578,7 +466,7 @@ var paletteIndexes = {
 			slide = CreateSVGElement('svg', {
 				xmlns: 'http://www.w3.org/2000/svg',
 				version: '1.1',
-				width: options.style.width,
+				width: isHorizontal() ? '100%' : options.style.width,
 				height: options.style.height
 			}, [CreateSVGElement('defs', {}, CreateSVGElement(linearGradient, {
 				id: 'gradient-hsv-' + uniqID,
@@ -703,9 +591,123 @@ var paletteIndexes = {
 		setValue: setValue
 	};
 }
+function CreateSVGElement(el, attrs, children) {
+	el = document.createElementNS(svgNS, el);
+	for (var key in attrs) {
+		el.setAttribute(key, attrs[key]);
+	}if (Object.prototype.toString.call(children) != '[object Array]') children = [children];
+	var i = 0,
+	    len = children[0] && children.length || 0;
+	for (; i < len; i++) {
+		el.appendChild(children[i]);
+	}return el;
+}
+function Palette(options) {
+	function paletteitem(percent, r, g, b) {
+		return {
+			percent: percent,
+			r: r,
+			g: g,
+			b: b
+		};
+	}
+	options = options || {};
+	if (options.palette === undefined) options.palette = paletteIndexes.BGRW;
+	var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0xFF),
+	new paletteitem(33, 0x00, 0xFF, 0x00),
+	new paletteitem(66, 0xFF, 0xFF, 0x00),
+	new paletteitem(100, 0xFF, 0xFF, 0xFF)];
+	switch (_typeof(options.palette)) {
+		case 'number':
+			switch (options.palette) {
+				case paletteIndexes.BGRW:
+					break;
+				case paletteIndexes.monochrome:
+					var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0x00),
+					new paletteitem(100, 0xFF, 0xFF, 0xFF)];
+					break;
+				case paletteIndexes.bidirectional:
+					var arrayPalette = [new paletteitem(0, 0xff, 0x00, 0x00),
+					new paletteitem(50, 0x00, 0x00, 0xFF),
+					new paletteitem(100, 0x00, 0xFF, 0x00)];
+					break;
+				case paletteIndexes.rainbow:
+					var arrayPalette = [
+					new paletteitem(0, 0xff, 0x32, 0x32), new paletteitem(16, 0xfc, 0xf5, 0x28), new paletteitem(32, 0x28, 0xfc, 0x28), new paletteitem(50, 0x28, 0xfc, 0xf8), new paletteitem(66, 0x27, 0x2e, 0xf9), new paletteitem(82, 0xff, 0x28, 0xfb), new paletteitem(100, 0xff, 0x32, 0x32)];
+					break;
+				default:
+					console.error('ColorPicker.create.Palette: invalid options.palette = ' + options.palette);
+			}
+			break;
+		case "object":
+			if (Array.isArray(options.palette)) {
+				arrayPalette = options.palette;
+				break;
+			}
+		default:
+			var message = 'invalid options.palette = ' + options.palette;
+			console.error('ColorPicker.create.Palette: ' + message);
+			options.onError(message);
+	}
+	this.getPalette = function () {
+		var palette = [];
+		arrayPalette.forEach(function (item) {
+			palette.unshift(CreateSVGElement('stop', {
+				offset: 100 - item.percent + '%', 'stop-color': '#'
+				+ ("0" + Number(item.r).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.g).toString(16)).slice(-2).toUpperCase() + ("0" + Number(item.b).toString(16)).slice(-2).toUpperCase(),
+				'stop-opacity': '1'
+			}));
+		});
+		return palette;
+	};
+	this.hsv2rgb = function (stringPercent) {
+		var percent = parseFloat(stringPercent);
+		if (percent < 0) {
+			console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
+		} else if (percent > 100) {
+			console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
+		}
+		var lastPalette = arrayPalette[arrayPalette.length - 1];
+		if (lastPalette.percent !== 100) {
+			var lastItem = {};
+			Object.keys(lastPalette).forEach(function (key) {
+				lastItem[key] = lastPalette[key];
+			});
+			lastItem.percent = 100;
+			arrayPalette.push(lastItem);
+		}
+		var itemPrev;
+		for (var i = 0; i < arrayPalette.length; i++) {
+			var item = arrayPalette[i];
+			if (itemPrev === undefined) itemPrev = item;
+			if (percent >= itemPrev.percent && percent <= item.percent) {
+				var color = function color(percentPrev, prev, percentItem, item) {
+					var percentD = percentItem - percentPrev;
+					if (percentD === 0) return prev;
+					return Math.round(prev + (item - prev) / percentD * (percent - percentPrev));
+				};
+				var r = color(itemPrev.percent, itemPrev.r, item.percent, item.r),
+				    g = color(itemPrev.percent, itemPrev.g, item.percent, item.g),
+				    b = color(itemPrev.percent, itemPrev.b, item.percent, item.b);
+				return {
+					r: r,
+					g: g,
+					b: b,
+					hex: "#" + (16777216 | b | g << 8 | r << 16).toString(16).slice(1),
+					percent: percent
+				};
+			}
+			itemPrev = item;
+		}
+		var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
+		console.error('ColorPicker.Palette.hsv2rgb: ' + message);
+		options.onError(message);
+	};
+}
 
 exports.paletteIndexes = paletteIndexes;
 exports.create = create;
+exports.Palette = Palette;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
