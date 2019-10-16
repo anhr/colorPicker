@@ -1,6 +1,6 @@
 test page
-http://localhost/threejs/nodejs/colorpicker/Example/index.html
-http://localhost/threejs/nodejs/colorpicker/Example/modular.html
+http://localhost/anhr/colorpicker/master/Example/index.html
+http://localhost/anhr/colorpicker/master/Example/modular.html
 https://raw.githack.com/anhr/ColorPicker/master/Example/index.html
 https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html
 -------------------------------------------
