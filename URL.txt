@@ -12,6 +12,6 @@ Building colorpicker
 Open "Node.js command prompt"
 
 d:
-cd "D:\My documents\MyProjects\webgl\three.js\GitHub\nodejs\colorpicker"
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\colorpicker\master"
 npm install
 npm run build

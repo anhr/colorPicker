@@ -194,7 +194,6 @@ function sync(url, options) {
 		request.ProcessReqChange(function (myRequest) {
 			if (myRequest.processStatus200Error()) return;
 			response = myRequest.req.responseText;
-			console.log('loadFile.sync.onload() ' + url);
 			options.onload(response, url);
 			return;
 		});
@@ -371,8 +370,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  */
 var optionsStyle = {
 	tag: 'style'
-};
-loadScript.sync('https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle);
+};loadScript.sync('/anhr/colorpicker/master/colorpicker.css', optionsStyle);
 var type = window.SVGAngle || document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? "SVG" : "VML";
 var svgNS = 'http://www.w3.org/2000/svg';
 var uniqID = 0;
@@ -407,7 +405,7 @@ var paletteIndexes = {
 	for (var style in options.style) {
 		elSliderWrapper.style[style] = options.style[style];
 	}
-	var palette = new Palette(options);
+	var palette = options.palette instanceof Palette ? options.palette : new Palette(options);
 	var slide;
 	function getSlideHeight() {
 		if (typeof options.style.height === "string") return parseInt(options.style.height);
@@ -430,7 +428,6 @@ var paletteIndexes = {
 		if (position === undefined) position = isHorizontal() ? getSlideWidth() * value / 100 : getSlideHeight() - getSlideHeight() * (options.direction ? value : 100 - value) / 100;
 		positionIndicators(position);
 		if (options.sliderIndicator.callback !== undefined) {
-			var ttt = getSlideWidth();
 			options.sliderIndicator.callback(c);
 		}
 	}
@@ -627,9 +624,10 @@ function Palette(options) {
 					new paletteitem(100, 0xFF, 0xFF, 0xFF)];
 					break;
 				case paletteIndexes.bidirectional:
-					var arrayPalette = [new paletteitem(0, 0xff, 0x00, 0x00),
-					new paletteitem(50, 0x00, 0x00, 0xFF),
-					new paletteitem(100, 0x00, 0xFF, 0x00)];
+					var arrayPalette = [
+					new paletteitem(0, 0xff, 0x30, 0x30),
+					new paletteitem(50, 0x30, 0x30, 0x30),
+					new paletteitem(100, 0x30, 0xFF, 0x30)];
 					break;
 				case paletteIndexes.rainbow:
 					var arrayPalette = [
@@ -660,13 +658,9 @@ function Palette(options) {
 		});
 		return palette;
 	};
-	this.hsv2rgb = function (stringPercent) {
+	this.hsv2rgb = function (stringPercent, min, max) {
 		var percent = parseFloat(stringPercent);
-		if (percent < 0) {
-			console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
-		} else if (percent > 100) {
-			console.error('Palette.hsv2rgb: invalid percent = ' + stringPercent);
-		}
+		if (min !== undefined && max !== undefined) percent = 100 / (max - min) * (percent - min);
 		var lastPalette = arrayPalette[arrayPalette.length - 1];
 		if (lastPalette.percent !== 100) {
 			var lastItem = {};
@@ -699,9 +693,7 @@ function Palette(options) {
 			}
 			itemPrev = item;
 		}
-		var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
-		console.error('ColorPicker.Palette.hsv2rgb: ' + message);
-		options.onError(message);
+		if (options.onError !== undefined) options.onError('Invalid color value of the ColorPicker: ' + stringPercent);
 	};
 }
 
