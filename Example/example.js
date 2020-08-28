@@ -167,6 +167,39 @@ function example( ColorPicker ) {
 
 	}
 
+	//Blue, green, red, white horizontal Colorpicker with slider indicator.
+	var elValueBGRW = document.getElementById( 'valueBGRW' );
+	var colorpickerBGRW = ColorPicker.create( "colorpickerBGRW", {
+
+		palette: ColorPicker.paletteIndexes.BGRW,
+		sliderIndicator: {
+			callback: function ( c ) {
+
+				//console.warn( 'callback: ' + c.percent + ' percent c.hex = ' + c.hex );
+				var color = 'RGB(' + c.r + ', ' + c.g + ', ' + c.b + ')';
+				var elColorBGRW = document.getElementById( 'colorBGRW' );
+				elColorBGRW.style.backgroundColor = color;
+				document.getElementById( 'colorBGRWtext' ).innerHTML = color;
+				elValueBGRW.value = c.percent;
+
+			},
+		},
+		style: {
+
+			//border: '1px solid black',
+			//width: '10px',
+			//height: '100px',
+
+		},
+		onError: function ( message ) { 'BGRW palette error: ' + alert( message ); }
+
+	} );
+	document.getElementById( 'enterValueBGRW' ).onclick = function () {
+
+		colorpickerBH.setValue( elValueBGRW.value );
+
+	}
+
 	//Monochrome horizontal Colorpicker with slider indicator.
 	var elValueMH = document.getElementById( 'valueMH' );
 	var colorpickerMH = ColorPicker.create( "colorpickerMH", {
