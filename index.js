@@ -1,9 +1,8 @@
 /**
- * ColorPicker - pure JavaScript color picker.
- *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
- * 
- * Thanks to FlexiColorPicker https://github.com/DavidDurman/FlexiColorPicker
+ * @module ColorPicker
+ * @description Pure JavaScript color picker.
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @See Thanks to [FlexiColorPicker]{@link https://github.com/DavidDurman/FlexiColorPicker}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -22,7 +21,7 @@ import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
 //import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
 
-var optionsStyle = {
+const optionsStyle = {
 
 	//style rel="stylesheet"
 	tag: 'style'
@@ -32,22 +31,27 @@ var optionsStyle = {
 //loadScript.sync( 'http://localhost/threejs/nodejs/colorpicker/colorpicker.css', optionsStyle );
 loadScript.sync( '/anhr/colorpicker/master/colorpicker.css', optionsStyle );
 
-var type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
-//	hueOffset = 15,
+const type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
 	svgNS = 'http://www.w3.org/2000/svg', uniqID = 0;
 
 /**
  * enumeration of available palettes.
-*/
-export var paletteIndexes = {
+ * @readonly
+ * @enum {number}
+ */
+const paletteIndexes = {
+	
 
-	BGRW: 0,//blue, green, red, white palette
+	/** [blue, green, red, white]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW} palette */
+	BGRW: 0,
+	/** [monochrome]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#Monochrome} palette */
 	monochrome: 1,
-	bidirectional: 2,//red, black, green
+	/** [red, black, green]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#Bidirectional} palette */
+	bidirectional: 2,//
+	/** [rainbow]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#rainbow} palette */
 	rainbow: 3,
 
 }
-
 /**
  * @callback callback
  * @param {object} c color
@@ -69,12 +73,12 @@ export var paletteIndexes = {
  * creates an instance of ColorPicker
  * @param {string|HTMLElement} elSliderWrapper id of the ColorPicker element or ColorPicker element
  * @param {object} [options] followed options is availablee
- * @param {number|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
+ * @param {paletteIndexes|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
  * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
  * paletteIndexes.monochrome: 1,
  * paletteIndexes.bidirectional: 2,//red, black, green
  * paletteIndexes.rainbow: 3,
- * Default is paletteIndexes.BGRW index
+ * Default is paletteIndexes.BGRW index.
  * Example of palette array:
 [
 	{ percent: 0, r: 0, g: 0, b: 0, },
@@ -100,7 +104,7 @@ export var paletteIndexes = {
  * @param {number} [options.sliderIndicator.value] Initial position of the slider indicator in percent. Default is 0.
  * @param {onError} [options.onError] Called whenever an error has occurred. Default is undefined.
  */
-export function create( elSliderWrapper, options ) {
+function create( elSliderWrapper, options ) {
 
 	options = options || {};
 	options.orientation = options.orientation || 'horizontal';
@@ -140,29 +144,26 @@ export function create( elSliderWrapper, options ) {
 
 	}
 
-//	var slideElement = elSliderWrapper;
-
-	var palette = options.palette instanceof Palette ? options.palette : new Palette( options );
+	const palette = options.palette instanceof Palette ? options.palette : new Palette( options );
 	var slide;
 	function getSlideHeight() {
 
 		if ( typeof options.style.height === "string" )
 			return parseInt( options.style.height );
 		return options.style.height;
-//		return slide.querySelector( 'rect' ).height.baseVal.value;
 
 	}
 	function getSlideWidth() {
 
-		/*Это не работает когда ширину задаю в процентах
+		/*пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		if ( typeof options.style.width === "string" )
 			return parseInt( options.style.width );
 		return options.style.width;
 		*/
 
-		//это не работает когда хочу установить начальное положение ползунка во время создания ColorPicker
-		//потому что к этому времени ширина ColorPicker еще не вычислена.
-		//Причем во время отладки, когда ставлю стоп, ширина уже успевает вычисляться и все работает.
+		//пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ColorPicker
+		//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ColorPicker пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+		//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 		//return slide.querySelector( 'rect' ).width.baseVal.value;
 
 		return slide.clientWidth;
@@ -175,8 +176,8 @@ export function create( elSliderWrapper, options ) {
 	 */
 	function setValue( value, position ) {
 
-		//Отдельно отправляю value и position потому что теряется точность при обратном преобразованиия из value в position 
-		//для перемещения slideIndicator
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ value пїЅ position пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ value пїЅ position 
+		//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ slideIndicator
 
 		if ( slideIndicator === undefined ) {
 
@@ -184,7 +185,7 @@ export function create( elSliderWrapper, options ) {
 			return;
 
 		}
-		var c = palette.hsv2rgb( value );
+		const c = palette.hsv2rgb( value );
 		if ( c === undefined ) {
 
 			console.error( 'ColorPicker.setValue: invalud c = ' + c );
@@ -263,7 +264,7 @@ export function create( elSliderWrapper, options ) {
 
 		try {
 
-			var linearGradient = 'linearGradient';
+			const linearGradient = 'linearGradient';
 			slide = CreateSVGElement( 'svg', {
 				xmlns: 'http://www.w3.org/2000/svg',
 				version: '1.1',
@@ -340,10 +341,10 @@ export function create( elSliderWrapper, options ) {
 			position = mouse.x;
 			size = getSlideWidth() - 1;
 
-			//В Chrome, Opera максимальное значение mouse.x равно ширине Slide
-			//В IE, Edge, Firefox и Safari for Windows максимальное значение mouse.x равно ширине Slide минус 1
-			//Думаю  в IE максисальное значение верно, потому что минимальное значение равно нулю.
-			//Поэтому в Chrome максимальное значение mouse.x уменьшаю на 1
+			//пїЅ Chrome, Opera пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mouse.x пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Slide
+			//пїЅ IE, Edge, Firefox пїЅ Safari for Windows пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mouse.x пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Slide пїЅпїЅпїЅпїЅпїЅ 1
+			//пїЅпїЅпїЅпїЅпїЅ  пїЅ IE пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Chrome пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mouse.x пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1
 			if ( position >= getSlideWidth() )
 				position = size;
 			value = ( position * 100 ) / size;
@@ -359,10 +360,10 @@ export function create( elSliderWrapper, options ) {
 			position = mouse.y;
 			size = getSlideHeight() - 1;
 
-			//В Chrome, Opera, Firefox максимальное значение mouse.y равно высоте Slide
-			//В IE, Edge Safari for Windows максимальное значение mouse.y равно высоте Slide минус 1
-			//Думаю  в IE максисальное значение верно, потому что минимальное значение равно нулю.
-			//Поэтому в Chrome максимальное значение mouse.y уменьшаю на 1
+			//пїЅ Chrome, Opera, Firefox пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mouse.y пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Slide
+			//пїЅ IE, Edge Safari for Windows пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mouse.y пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Slide пїЅпїЅпїЅпїЅпїЅ 1
+			//пїЅпїЅпїЅпїЅпїЅ  пїЅ IE пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Chrome пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mouse.y пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1
 			if ( position >= getSlideHeight() )
 				position = size;
 			value = ( 1 - position / size ) * 100;
@@ -373,8 +374,8 @@ export function create( elSliderWrapper, options ) {
 			}
 
 		}
-		//Отдельно отправляю value и position потому что теряется точность при обратном преобразованиия из value в position 
-		//для перемещения slideIndicator
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ value пїЅ position пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ value пїЅ position 
+		//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ slideIndicator
 		setValue( value, position );
 
 	}
@@ -401,21 +402,17 @@ export function create( elSliderWrapper, options ) {
 				function mousePosition( evt ) {
 					// IE:
 					if ( window.event && window.event.contentOverflow !== undefined ) {
-//console.warn( 'mousePosition: IE: window.event.offsetX = ' + window.event.offsetX + ' window.event.offsetY = ' + window.event.offsetY );
 						return { x: window.event.offsetX, y: window.event.offsetY };
 					}
 					// Webkit:
 					if ( evt.offsetX !== undefined && evt.offsetY !== undefined ) {
-//console.warn( 'mousePosition: Webkit: evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY );
 						return { x: evt.offsetX, y: evt.offsetY };
 					}
 					// Firefox:
 					var wrapper = evt.target.parentNode.parentNode;
-//console.warn( 'mousePosition: Firefox: evt.layerX - wrapper.offsetLeft = ' + ( evt.layerX - wrapper.offsetLeft ) + ' evt.layerY - wrapper.offsetTop = ' + ( evt.layerY - wrapper.offsetTop ) );
 					return { x: evt.layerX - wrapper.offsetLeft, y: evt.layerY - wrapper.offsetTop };
 				}
 
-//console.warn( 'evt.offsetX = ' + evt.offsetX + ' evt.offsetY = ' + evt.offsetY );
 				mouseMove( mousePosition( evt ) );
 
 			}
@@ -453,18 +450,14 @@ export function create( elSliderWrapper, options ) {
 
 			//Touchscreen support
 
-			addEventListener( element, 'touchstart', function ( evt ) {
-
-//console.warn( 'ColorPicker.create.enableDragging: touchstart event' );
-
-			} );
+			addEventListener( element, 'touchstart', function ( evt ) { } );
 			addEventListener( element, 'touchmove', function ( evt ) {
 
-				//Если убрать эту функцияю то во время движения пальца по ColorPicker одновременно со slideIndicator будет
-				//произходить скроллинг экрана если страница не помещается на экране
+				//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ ColorPicker пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ slideIndicator пїЅпїЅпїЅпїЅпїЅ
+				//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 				evt.preventDefault();
 
-				var rect = evt.srcElement.getBoundingClientRect(),
+				const rect = evt.srcElement.getBoundingClientRect(),
 					x = ( evt.touches[0].clientX - rect.left ),
 					y = ( evt.touches[0].clientY - rect.top );
 				if ( x < 0 ) x = 0;
@@ -482,7 +475,7 @@ export function create( elSliderWrapper, options ) {
 			//mouse support
 			addEventListener( element, 'mousedown', function ( evt ) {
 
-				var mouseup = 'mouseup', mousemove = 'mousemove';
+				const mouseup = 'mouseup', mousemove = 'mousemove';
 				function onMouseUp() {
 
 					//console.warn( mouseup );
@@ -523,10 +516,6 @@ export function create( elSliderWrapper, options ) {
 	};
 }
 
-
-/**
- * Create SVG element.
- */
 function CreateSVGElement( el, attrs, children ) {
 
 	//			console.warn( 'CreateSVGElement ' + el );
@@ -540,7 +529,23 @@ function CreateSVGElement( el, attrs, children ) {
 	return el;
 }
 
-export function Palette( options ) {
+/**
+ * create palette
+ * @param {object} [options] followed options is available
+ * @param {paletteIndexes|object[]} [options.palette] Palette index or palette array. The following indexes are available:
+ * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
+ * paletteIndexes.monochrome: 1,
+ * paletteIndexes.bidirectional: 2,//red, black, green
+ * paletteIndexes.rainbow: 3,
+ * Default is paletteIndexes.BGRW index.
+ * Example of palette array:
+[
+	{ percent: 0, r: 0, g: 0, b: 0, },
+	{ percent: 10, r: 0xff, g: 255, b: 0xff, },
+	{ percent: 100, r: 0xff, g: 255, b: 0xff, },
+]
+*/
+function Palette( options ) {
 
 	function paletteitem( percent, r, g, b ) {
 
@@ -578,18 +583,12 @@ export function Palette( options ) {
 					var arrayPalette = [
 
 						new paletteitem( 0, 0x00, 0x00, 0x00 ),//blach
-						//new paletteitem( 10, 0x80, 0x80, 0x80 ),//gray
 						new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
 
 					];
 					break;
 				case paletteIndexes.bidirectional:
 					var arrayPalette = [
-/*
-						new paletteitem( 0, 0xff, 0x00, 0x00 ),//red
-						new paletteitem( 50, 0x00, 0x00, 0xFF ),//blue
-						new paletteitem( 100, 0x00, 0xFF, 0x00 ),//green
-*/
 						new paletteitem( 0, 0xff, 0x30, 0x30 ),//red
 						new paletteitem( 50, 0x30, 0x30, 0x30 ),//gray
 						new paletteitem( 100, 0x30, 0xFF, 0x30 ),//green
@@ -599,11 +598,6 @@ export function Palette( options ) {
 				case paletteIndexes.rainbow:
 					var arrayPalette = [
 
-						/*
-												new paletteitem(   0, 0xff, 0x00, 0x00 ),//red
-												new paletteitem(  50, 0x00, 0xff, 0x00 ),//green
-												new paletteitem( 100, 0x00, 0x00, 0xff ),//blue
-						*/
 						new paletteitem( 0, 0xff, 0x32, 0x32 ),
 						new paletteitem( 16, 0xfc, 0xf5, 0x28 ),
 						new paletteitem( 32, 0x28, 0xfc, 0x28 ),
@@ -632,9 +626,15 @@ export function Palette( options ) {
 			options.onError( message );
 
 	}
+	/**
+	* returns palette array.
+	* @function Palette.
+	* getPalette
+	* @returns {object[]} palette array
+	*/
 	this.getPalette = function () {
 
-		var palette = [];
+		const palette = [];
 		arrayPalette.forEach( function ( item ) {
 
 			palette.unshift( CreateSVGElement( 'stop', {
@@ -652,33 +652,27 @@ export function Palette( options ) {
 		return palette;
 
 	}
+	/**
+	* converts a percent or value from min to max  to object with r, g, b, hex and percent.
+	* @function Palette.
+	* hsv2rgb
+	* @param {number} stringPercent coordinate of color from palette in percent or value from min to max
+	* @param {number} [min] min stringPercent. Default is undefined.
+	* @param {number} [max] max stringPercent. Default is undefined.
+	* @returns {object} object with r, g, b, hex and percent
+	*/
 	this.hsv2rgb = function ( stringPercent, min, max ) {
 
 		var percent = parseFloat( stringPercent );
-		//console.warn( 'percent = ' + stringPercent );
 		if ( min !== undefined && max !== undefined )
 			percent = ( 100 / ( max - min ) ) * ( percent - min );
-/*
-		if ( percent < 0 ) {
-
-			console.error( 'Palette.hsv2rgb: invalid percent = ' + percent );
-			percent = 0;
-
-		}
-		else if ( percent > 100 ) {
-
-			console.error( 'Palette.hsv2rgb: invalid percent = ' + percent );
-			percent = 100;
-
-		}
-*/
 		var lastPalette = arrayPalette[arrayPalette.length - 1];
 		if ( lastPalette.percent !== 100 ) {
 
 			//not compatible with Safari for Windows
 			//var lastItem = Object.assign( {}, arrayPalette[arrayPalette.length - 1] );
 
-			var lastItem = {};
+			const lastItem = {};
 			Object.keys( lastPalette ).forEach( function ( key ) {
 
 				lastItem[key] = lastPalette[key];
@@ -691,16 +685,9 @@ export function Palette( options ) {
 		var itemPrev;
 		for ( var i = 0; i < arrayPalette.length; i++ ) {
 
-			var item = arrayPalette[i];
+			const item = arrayPalette[i];
 			if ( itemPrev === undefined )
 				itemPrev = item;
-			/*
-							var item = Object.assign( {}, arrayPalette[i] );//arrayPalette[i];
-							if ( itemPrev === undefined )
-								itemPrev = Object.assign( {}, item );//itemPrev = item;
-							if ( arrayPalette.length === ( i + 1 ) )
-								item.percent = 100;
-			*/
 			if ( ( ( percent >= itemPrev.percent ) && ( percent <= item.percent ) ) ) {
 
 				function color( percentPrev, prev, percentItem, item ) {
@@ -711,7 +698,7 @@ export function Palette( options ) {
 					return Math.round( prev + ( ( item - prev ) / percentD ) * ( percent - percentPrev ) );
 
 				}
-				var r = color( itemPrev.percent, itemPrev.r, item.percent, item.r ),
+				const r = color( itemPrev.percent, itemPrev.r, item.percent, item.r ),
 					g = color( itemPrev.percent, itemPrev.g, item.percent, item.g ),
 					b = color( itemPrev.percent, itemPrev.b, item.percent, item.b );
 				return {
@@ -720,7 +707,6 @@ export function Palette( options ) {
 					g: g,
 					b: b,
 					hex: "#" + ( 16777216 | b | ( g << 8 ) | ( r << 16 ) ).toString( 16 ).slice( 1 ),
-//					color = new Color( "rgb(" + r + ", " + g + ", " + b + ")" ),
 					percent: percent
 
 				};
@@ -729,19 +715,56 @@ export function Palette( options ) {
 			itemPrev = item;
 
 		}
-/*
-		var message = 'Invalid color value of the ColorPicker: ' + stringPercent;
-		console.error( 'ColorPicker.Palette.hsv2rgb: ' + message );
-*/
 		if ( options.onError !== undefined )
 			options.onError( 'Invalid color value of the ColorPicker: ' + stringPercent );
 
 	}
 
+	/**
+	* converts a value in percentages to color.
+	* @function Palette.
+	* toColor
+	* @param {number} value coordinate of color from palette in percent
+	* @param {number} min
+	* @param {number} max
+	* @returns {THREE.Color} color
+	*/
+	this.toColor = function ( value, min, max ) {
+
+		if ( typeof THREE === 'undefined' ){
+
+			console.error( 'Call ColorPicker.palette.setTHREE(THREE) first.' );
+			return;
+			
+		}
+		if ( value instanceof THREE.Color )
+			return value;
+		var c = this.hsv2rgb( value, min, max );
+		if ( c === undefined )
+			c = { r: 255, g: 255, b: 255 }
+		return new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
+
+	}
+
 }
+
+var THREE;
 /**
- * converts a value in percentages to color
- * @param {number} value coordinate of color from palette in percent
- * @returns {object} color
+ * set THREE
+ * @function Palette.
+ * setTHREE
+ * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  */
-//export function toColor( value ) { return palette.hsv2rgb( value ); }
+Palette.setTHREE = function ( _THREE ) {
+
+	if ( THREE ) {
+
+		if ( !Object.is( THREE, _THREE ) )
+			console.error( 'Palette.setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
+		return;
+
+	}
+	THREE = _THREE;
+
+}
+export { paletteIndexes, create, Palette };
