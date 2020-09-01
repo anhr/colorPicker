@@ -32,7 +32,8 @@ const optionsStyle = {
 loadScript.sync( '/anhr/colorpicker/master/colorpicker.css', optionsStyle );
 
 const type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
-	svgNS = 'http://www.w3.org/2000/svg', uniqID = 0;
+	svgNS = 'http://www.w3.org/2000/svg';
+var uniqID = 0;
 
 /**
  * enumeration of available palettes.
