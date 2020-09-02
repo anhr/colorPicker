@@ -24,7 +24,7 @@ import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpi
 or
 
 * Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/ColorPicker/master/Example/index.html) web page.
+* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html) web page.
 * Download [loadFileNodeJS](https://github.com/anhr/loadFileNodeJS) repository into your "[folderName]\loadFileNodeJS\master" folder.
 * Download [loadScriptNodeJS](https://github.com/anhr/loadScriptNodeJS) repository into your "[folderName]\loadScriptNodeJS\master" folder.
 * Download [colorPicker](https://github.com/anhr/colorPicker) repository into your "[folderName]\colorPicker\master" folder.
