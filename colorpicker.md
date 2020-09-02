@@ -19,7 +19,17 @@ or
 ```
 or if your browser support modular JavaScript code, in your `script type="module"` tag, include the following code:
 ```
-import ColorPicker from './colorpicker.js';
+import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+```
+or
+
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/ColorPicker/master/Example/index.html) web page.
+* Download [loadFileNodeJS](https://github.com/anhr/loadFileNodeJS) repository into your "[folderName]\loadFileNodeJS\master" folder.
+* Download [loadScriptNodeJS](https://github.com/anhr/loadScriptNodeJS) repository into your "[folderName]\loadScriptNodeJS\master" folder.
+* Download [colorPicker](https://github.com/anhr/colorPicker) repository into your "[folderName]\colorPicker\master" folder.
+```
+import ColorPicker from './colorpicker/master/colorpicker.js';
 ```
 
 In your `body` tag, include the following code:
@@ -29,28 +39,22 @@ In your `body` tag, include the following code:
 
 Now you can use window.ColorPicker for select a color from picker.
 
-### ColorPicker.create( elSliderWrapper, options )
-
-Creates an instance of ColorPicker.
-
-elSliderWrapper: id of the ColorPicker element or ColorPicker element.
-
-options: See details in the `function create( elSliderWrapper, options )` in the [index.js](https://github.com/anhr/colorPicker/blob/master/index.js) file.
-
-#### Example of the simple ColorPicker
+Example of the simple ColorPicker
 ```
 ColorPicker.create( document.getElementById( "colorpicker" ) );
 ```
-#### Example of the event if user changed color..
+Add a slider, and an event when the user changed color.
 ```
 ColorPicker.create( "colorpicker", {
 
 	sliderIndicator: {
+
 		callback: function ( c ) {
 
-			console.log( 'callback: ' + c.percent + ' percent c.hex = ' + c.hex );
+			console.log( 'color: ' + c.percent + ' percent c.hex = ' + c.hex );
 
 		}
+
 	},
 
 } );

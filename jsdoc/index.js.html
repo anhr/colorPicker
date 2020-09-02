@@ -43,10 +43,7 @@
 
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
 
-//local version
 import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
-
-//import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
 
 const optionsStyle = {
@@ -60,7 +57,8 @@ const optionsStyle = {
 loadScript.sync( '/anhr/colorpicker/master/colorpicker.css', optionsStyle );
 
 const type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
-	svgNS = 'http://www.w3.org/2000/svg', uniqID = 0;
+	svgNS = 'http://www.w3.org/2000/svg';
+var uniqID = 0;
 
 /**
  * enumeration of available palettes.
@@ -82,6 +80,7 @@ const paletteIndexes = {
 }
 /**
  * @callback callback
+ * @description Called whenever the color is changed provided chosen color in RGB HEX format. See options.sliderIndicator.callback param of the create method.
  * @param {object} c color
  * @param {string} c.hex A hexadecimal color is specified with: #RRGGBB, where the RR (red), GG (green) and BB (blue)
  * hexadecimal integers specify the components of the color. All values must be between 00 and FF.
@@ -181,31 +180,13 @@ function create( elSliderWrapper, options ) {
 		return options.style.height;
 
 	}
-	function getSlideWidth() {
-
-		/*��� �� �������� ����� ������ ����� � ���������
-		if ( typeof options.style.width === "string" )
-			return parseInt( options.style.width );
-		return options.style.width;
-		*/
-
-		//��� �� �������� ����� ���� ���������� ��������� ��������� �������� �� ����� �������� ColorPicker
-		//������ ��� � ����� ������� ������ ColorPicker ��� �� ���������.
-		//������ �� ����� �������, ����� ������ ����, ������ ��� �������� ����������� � ��� ��������.
-		//return slide.querySelector( 'rect' ).width.baseVal.value;
-
-		return slide.clientWidth;
-
-	}
+	function getSlideWidth() { return slide.clientWidth; }
 	/**
 	 * sets color from palette
 	 * @param {number} value coordinate of color from palette in percent
 	 * @param {number} position coordinate of color from palette
 	 */
 	function setValue( value, position ) {
-
-		//�������� ��������� value � position ������ ��� �������� �������� ��� �������� ��������������� �� value � position 
-		//��� ����������� slideIndicator
 
 		if ( slideIndicator === undefined ) {
 
@@ -226,7 +207,6 @@ function create( elSliderWrapper, options ) {
 			position = isHorizontal() ?
 				( getSlideWidth() * value ) / 100 :
 				getSlideHeight() - ( getSlideHeight() * ( options.direction ? value : 100 - value ) ) / 100;
-//console.warn( 'value = ' + value + ' position = ' + position );
 		positionIndicators( position );
 		if ( options.sliderIndicator.callback !== undefined ) {
 
@@ -256,13 +236,11 @@ function create( elSliderWrapper, options ) {
 	 */
 	function positionIndicators( position ) {
 
-//console.warn( 'position = ' + position + ' slideIndicator = ' + slideIndicator );
 		if ( slideIndicator === undefined )
 			return;
 
 		if ( isHorizontal() ) {
 
-//console.warn( 'position = ' + position );
 			if ( ( position &lt; 0 ) || ( position > getSlideWidth() ) ) {
 
 				console.error( 'ColorPicker.positionIndicators: Invalid position = ' + position );
@@ -274,7 +252,6 @@ function create( elSliderWrapper, options ) {
 
 		} else {
 
-//console.warn( 'position = ' + position );
 			if ( ( position &lt; 0 ) || ( position > getSlideHeight() ) ) {
 
 				console.error( 'ColorPicker.positionIndicators: Invalid position = ' + position );
@@ -333,7 +310,6 @@ function create( elSliderWrapper, options ) {
 
 		}
 
-//		slideElement.appendChild( slide );
 		elSliderWrapper.appendChild( slide );
 		elSliderWrapper.style.height = getSlideHeight() + 'px'; 
 
@@ -352,9 +328,7 @@ function create( elSliderWrapper, options ) {
 	} else {
 
 		console.error( 'Under constraction' );
-/*
-			this.slideElement.innerHTML = slide;
-*/
+
 	}
 
 	function mouseMove( mouse ) {
@@ -369,10 +343,6 @@ function create( elSliderWrapper, options ) {
 			position = mouse.x;
 			size = getSlideWidth() - 1;
 
-			//� Chrome, Opera ������������ �������� mouse.x ����� ������ Slide
-			//� IE, Edge, Firefox � Safari for Windows ������������ �������� mouse.x ����� ������ Slide ����� 1
-			//�����  � IE ������������ �������� �����, ������ ��� ����������� �������� ����� ����.
-			//������� � Chrome ������������ �������� mouse.x �������� �� 1
 			if ( position >= getSlideWidth() )
 				position = size;
 			value = ( position * 100 ) / size;
@@ -388,10 +358,6 @@ function create( elSliderWrapper, options ) {
 			position = mouse.y;
 			size = getSlideHeight() - 1;
 
-			//� Chrome, Opera, Firefox ������������ �������� mouse.y ����� ������ Slide
-			//� IE, Edge Safari for Windows ������������ �������� mouse.y ����� ������ Slide ����� 1
-			//�����  � IE ������������ �������� �����, ������ ��� ����������� �������� ����� ����.
-			//������� � Chrome ������������ �������� mouse.y �������� �� 1
 			if ( position >= getSlideHeight() )
 				position = size;
 			value = ( 1 - position / size ) * 100;
@@ -402,8 +368,6 @@ function create( elSliderWrapper, options ) {
 			}
 
 		}
-		//�������� ��������� value � position ������ ��� �������� �������� ��� �������� ��������������� �� value � position 
-		//��� ����������� slideIndicator
 		setValue( value, position );
 
 	}
@@ -481,22 +445,18 @@ function create( elSliderWrapper, options ) {
 			addEventListener( element, 'touchstart', function ( evt ) { } );
 			addEventListener( element, 'touchmove', function ( evt ) {
 
-				//���� ������ ��� �������� �� �� ����� �������� ������ �� ColorPicker ������������ �� slideIndicator �����
-				//����������� ��������� ������ ���� �������� �� ���������� �� ������
 				evt.preventDefault();
 
-				const rect = evt.srcElement.getBoundingClientRect(),
+				var rect = evt.srcElement.getBoundingClientRect(),
 					x = ( evt.touches[0].clientX - rect.left ),
 					y = ( evt.touches[0].clientY - rect.top );
 				if ( x &lt; 0 ) x = 0;
 				if ( y &lt; 0 ) y = 0;
-//console.warn( 'ColorPicker.create.enableDragging: touchmove event. x = ' + x + ' y = ' + y );
 				mouseMove( { x: x, y: y } );
 
 			} );
 			addEventListener( element, 'touchend', function ( evt ) {
 
-//console.warn( 'ColorPicker.create.enableDragging: touchend event' );
 
 			} );
 
@@ -546,7 +506,6 @@ function create( elSliderWrapper, options ) {
 
 function CreateSVGElement( el, attrs, children ) {
 
-	//			console.warn( 'CreateSVGElement ' + el );
 	el = document.createElementNS( svgNS, el );
 	for ( var key in attrs )
 		el.setAttribute( key, attrs[key] );
@@ -654,7 +613,7 @@ function Palette( options ) {
 			options.onError( message );
 
 	}
-	/**
+	/*
 	* returns palette array.
 	* @function Palette.
 	* getPalette
@@ -680,7 +639,7 @@ function Palette( options ) {
 		return palette;
 
 	}
-	/**
+	/*
 	* converts a percent or value from min to max  to object with r, g, b, hex and percent.
 	* @function Palette.
 	* hsv2rgb
@@ -812,7 +771,7 @@ export { paletteIndexes, create, Palette };
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Aug 28 2020 18:02:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Sep 02 2020 10:46:38 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
