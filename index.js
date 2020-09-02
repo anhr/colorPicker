@@ -52,6 +52,7 @@ const paletteIndexes = {
 }
 /**
  * @callback callback
+ * @description Called whenever the color is changed provided chosen color in RGB HEX format. See options.sliderIndicator.callback param of the create method.
  * @param {object} c color
  * @param {string} c.hex A hexadecimal color is specified with: #RRGGBB, where the RR (red), GG (green) and BB (blue)
  * hexadecimal integers specify the components of the color. All values must be between 00 and FF.
@@ -416,8 +417,6 @@ function create( elSliderWrapper, options ) {
 			addEventListener( element, 'touchstart', function ( evt ) { } );
 			addEventListener( element, 'touchmove', function ( evt ) {
 
-				//���� ������ ��� �������� �� �� ����� �������� ������ �� ColorPicker ������������ �� slideIndicator �����
-				//����������� ��������� ������ ���� �������� �� ���������� �� ������
 				evt.preventDefault();
 
 				var rect = evt.srcElement.getBoundingClientRect(),
@@ -586,7 +585,7 @@ function Palette( options ) {
 			options.onError( message );
 
 	}
-	/**
+	/*
 	* returns palette array.
 	* @function Palette.
 	* getPalette
@@ -612,7 +611,7 @@ function Palette( options ) {
 		return palette;
 
 	}
-	/**
+	/*
 	* converts a percent or value from min to max  to object with r, g, b, hex and percent.
 	* @function Palette.
 	* hsv2rgb
