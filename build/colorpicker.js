@@ -354,11 +354,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 };
 
 /**
- * ColorPicker - pure JavaScript color picker.
- *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
- *
- * Thanks to FlexiColorPicker https://github.com/DavidDurman/FlexiColorPicker
+ * @module ColorPicker
+ * @description Pure JavaScript color picker.
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @See Thanks to [FlexiColorPicker]{@link https://github.com/DavidDurman/FlexiColorPicker}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -542,8 +541,7 @@ var paletteIndexes = {
 		};
 		var enableDragging = function enableDragging(ctx, listener) {
 			var element = slide;
-			addEventListener(element, 'touchstart', function (evt) {
-			});
+			addEventListener(element, 'touchstart', function (evt) {});
 			addEventListener(element, 'touchmove', function (evt) {
 				evt.preventDefault();
 				var rect = evt.srcElement.getBoundingClientRect(),
@@ -553,8 +551,7 @@ var paletteIndexes = {
 				if (y < 0) y = 0;
 				mouseMove({ x: x, y: y });
 			});
-			addEventListener(element, 'touchend', function (evt) {
-			});
+			addEventListener(element, 'touchend', function (evt) {});
 			addEventListener(element, 'mousedown', function (evt) {
 				var mouseup = 'mouseup',
 				    mousemove = 'mousemove';
@@ -624,14 +621,12 @@ function Palette(options) {
 					new paletteitem(100, 0xFF, 0xFF, 0xFF)];
 					break;
 				case paletteIndexes.bidirectional:
-					var arrayPalette = [
-					new paletteitem(0, 0xff, 0x30, 0x30),
+					var arrayPalette = [new paletteitem(0, 0xff, 0x30, 0x30),
 					new paletteitem(50, 0x30, 0x30, 0x30),
 					new paletteitem(100, 0x30, 0xFF, 0x30)];
 					break;
 				case paletteIndexes.rainbow:
-					var arrayPalette = [
-					new paletteitem(0, 0xff, 0x32, 0x32), new paletteitem(16, 0xfc, 0xf5, 0x28), new paletteitem(32, 0x28, 0xfc, 0x28), new paletteitem(50, 0x28, 0xfc, 0xf8), new paletteitem(66, 0x27, 0x2e, 0xf9), new paletteitem(82, 0xff, 0x28, 0xfb), new paletteitem(100, 0xff, 0x32, 0x32)];
+					var arrayPalette = [new paletteitem(0, 0xff, 0x32, 0x32), new paletteitem(16, 0xfc, 0xf5, 0x28), new paletteitem(32, 0x28, 0xfc, 0x28), new paletteitem(50, 0x28, 0xfc, 0xf8), new paletteitem(66, 0x27, 0x2e, 0xf9), new paletteitem(82, 0xff, 0x28, 0xfb), new paletteitem(100, 0xff, 0x32, 0x32)];
 					break;
 				default:
 					console.error('ColorPicker.create.Palette: invalid options.palette = ' + options.palette);
@@ -695,7 +690,25 @@ function Palette(options) {
 		}
 		if (options.onError !== undefined) options.onError('Invalid color value of the ColorPicker: ' + stringPercent);
 	};
+	this.toColor = function (value, min, max) {
+		if (typeof THREE === 'undefined') {
+			console.error('Call ColorPicker.palette.setTHREE(THREE) first.');
+			return;
+		}
+		if (value instanceof THREE.Color) return value;
+		var c = this.hsv2rgb(value, min, max);
+		if (c === undefined) c = { r: 255, g: 255, b: 255 };
+		return new THREE.Color("rgb(" + c.r + ", " + c.g + ", " + c.b + ")");
+	};
 }
+var THREE;
+Palette.setTHREE = function (_THREE) {
+	if (THREE) {
+		if (!Object.is(THREE, _THREE)) console.error('Palette.setTHREE: duplicate THREE. Please use one instance of the THREE library.');
+		return;
+	}
+	THREE = _THREE;
+};
 
 exports.paletteIndexes = paletteIndexes;
 exports.create = create;

@@ -26,7 +26,7 @@ Generating a website:
 	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
 	npm install -g jsdoc
 	/////////////////////////////////////////////////////////////
-	//AxesHelper doc
+	//colorpicker doc
 
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\colorpicker\master\jsdoc"
 

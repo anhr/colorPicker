@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ColorPicker - pure JavaScript color picker.
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
@@ -21,7 +21,19 @@ import babel from 'rollup-plugin-babel';
 const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
 
 export default {
+
+    //При использовании <script src="http://localhost/anhr/ColorPicker/master/build/colorpicker.js"></script>
+    //Появляется ошибка:
+    //Uncaught TypeError: ColorPicker.create is not a function
+  //input: 'colorpicker.js',
+
+    //При использовании import ColorPicker from 'http://localhost/anhr/colorpicker/master/build/colorpicker.module.js';
+    //Появляется ошибка:
+    //Uncaught SyntaxError: The requested module 'http://localhost/anhr/colorpicker/master/build/colorpicker.module.js' does not provide an export named 'default'
+    //Вместо этого надо использовать
+    //import ColorPicker from './colorpicker/master/colorpicker.js';
   input: 'index.js',
+
   output: [{
     // TODO: Remove default exports, and this line, in v0.8.0.
     exports: 'named',

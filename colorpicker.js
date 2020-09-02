@@ -1,6 +1,6 @@
 ﻿/**
- * ColorPicker - pure JavaScript color picker without using images, external CSS or 1px divs.
- *
+ * @module ColorPicker
+ * @description Pure JavaScript color picker.
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
  * Thanks to https://github.com/DavidDurman/FlexiColorPicker

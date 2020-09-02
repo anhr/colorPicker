@@ -15,10 +15,7 @@
 
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
 
-//local version
 import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
-
-//import loadScript from '../../loadScriptNodeJS/master/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
 
 const optionsStyle = {
@@ -154,31 +151,13 @@ function create( elSliderWrapper, options ) {
 		return options.style.height;
 
 	}
-	function getSlideWidth() {
-
-		/*��� �� �������� ����� ������ ����� � ���������
-		if ( typeof options.style.width === "string" )
-			return parseInt( options.style.width );
-		return options.style.width;
-		*/
-
-		//��� �� �������� ����� ���� ���������� ��������� ��������� �������� �� ����� �������� ColorPicker
-		//������ ��� � ����� ������� ������ ColorPicker ��� �� ���������.
-		//������ �� ����� �������, ����� ������ ����, ������ ��� �������� ����������� � ��� ��������.
-		//return slide.querySelector( 'rect' ).width.baseVal.value;
-
-		return slide.clientWidth;
-
-	}
+	function getSlideWidth() { return slide.clientWidth; }
 	/**
 	 * sets color from palette
 	 * @param {number} value coordinate of color from palette in percent
 	 * @param {number} position coordinate of color from palette
 	 */
 	function setValue( value, position ) {
-
-		//�������� ��������� value � position ������ ��� �������� �������� ��� �������� ��������������� �� value � position 
-		//��� ����������� slideIndicator
 
 		if ( slideIndicator === undefined ) {
 
@@ -199,7 +178,6 @@ function create( elSliderWrapper, options ) {
 			position = isHorizontal() ?
 				( getSlideWidth() * value ) / 100 :
 				getSlideHeight() - ( getSlideHeight() * ( options.direction ? value : 100 - value ) ) / 100;
-//console.warn( 'value = ' + value + ' position = ' + position );
 		positionIndicators( position );
 		if ( options.sliderIndicator.callback !== undefined ) {
 
@@ -229,13 +207,11 @@ function create( elSliderWrapper, options ) {
 	 */
 	function positionIndicators( position ) {
 
-//console.warn( 'position = ' + position + ' slideIndicator = ' + slideIndicator );
 		if ( slideIndicator === undefined )
 			return;
 
 		if ( isHorizontal() ) {
 
-//console.warn( 'position = ' + position );
 			if ( ( position < 0 ) || ( position > getSlideWidth() ) ) {
 
 				console.error( 'ColorPicker.positionIndicators: Invalid position = ' + position );
@@ -247,7 +223,6 @@ function create( elSliderWrapper, options ) {
 
 		} else {
 
-//console.warn( 'position = ' + position );
 			if ( ( position < 0 ) || ( position > getSlideHeight() ) ) {
 
 				console.error( 'ColorPicker.positionIndicators: Invalid position = ' + position );
@@ -306,7 +281,6 @@ function create( elSliderWrapper, options ) {
 
 		}
 
-//		slideElement.appendChild( slide );
 		elSliderWrapper.appendChild( slide );
 		elSliderWrapper.style.height = getSlideHeight() + 'px'; 
 
@@ -325,9 +299,7 @@ function create( elSliderWrapper, options ) {
 	} else {
 
 		console.error( 'Under constraction' );
-/*
-			this.slideElement.innerHTML = slide;
-*/
+
 	}
 
 	function mouseMove( mouse ) {
@@ -342,10 +314,6 @@ function create( elSliderWrapper, options ) {
 			position = mouse.x;
 			size = getSlideWidth() - 1;
 
-			//� Chrome, Opera ������������ �������� mouse.x ����� ������ Slide
-			//� IE, Edge, Firefox � Safari for Windows ������������ �������� mouse.x ����� ������ Slide ����� 1
-			//�����  � IE ������������ �������� �����, ������ ��� ����������� �������� ����� ����.
-			//������� � Chrome ������������ �������� mouse.x �������� �� 1
 			if ( position >= getSlideWidth() )
 				position = size;
 			value = ( position * 100 ) / size;
@@ -361,10 +329,6 @@ function create( elSliderWrapper, options ) {
 			position = mouse.y;
 			size = getSlideHeight() - 1;
 
-			//� Chrome, Opera, Firefox ������������ �������� mouse.y ����� ������ Slide
-			//� IE, Edge Safari for Windows ������������ �������� mouse.y ����� ������ Slide ����� 1
-			//�����  � IE ������������ �������� �����, ������ ��� ����������� �������� ����� ����.
-			//������� � Chrome ������������ �������� mouse.y �������� �� 1
 			if ( position >= getSlideHeight() )
 				position = size;
 			value = ( 1 - position / size ) * 100;
@@ -375,8 +339,6 @@ function create( elSliderWrapper, options ) {
 			}
 
 		}
-		//�������� ��������� value � position ������ ��� �������� �������� ��� �������� ��������������� �� value � position 
-		//��� ����������� slideIndicator
 		setValue( value, position );
 
 	}
@@ -458,18 +420,16 @@ function create( elSliderWrapper, options ) {
 				//����������� ��������� ������ ���� �������� �� ���������� �� ������
 				evt.preventDefault();
 
-				const rect = evt.srcElement.getBoundingClientRect(),
+				var rect = evt.srcElement.getBoundingClientRect(),
 					x = ( evt.touches[0].clientX - rect.left ),
 					y = ( evt.touches[0].clientY - rect.top );
 				if ( x < 0 ) x = 0;
 				if ( y < 0 ) y = 0;
-//console.warn( 'ColorPicker.create.enableDragging: touchmove event. x = ' + x + ' y = ' + y );
 				mouseMove( { x: x, y: y } );
 
 			} );
 			addEventListener( element, 'touchend', function ( evt ) {
 
-//console.warn( 'ColorPicker.create.enableDragging: touchend event' );
 
 			} );
 
@@ -519,7 +479,6 @@ function create( elSliderWrapper, options ) {
 
 function CreateSVGElement( el, attrs, children ) {
 
-	//			console.warn( 'CreateSVGElement ' + el );
 	el = document.createElementNS( svgNS, el );
 	for ( var key in attrs )
 		el.setAttribute( key, attrs[key] );
