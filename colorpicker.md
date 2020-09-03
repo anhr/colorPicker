@@ -59,6 +59,10 @@ ColorPicker.create( "colorpicker", {
 
 } );
 ```
+Create palette.
+```
+new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } )
+```
 ## Directory Contents
 
 ```

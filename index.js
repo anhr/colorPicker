@@ -55,8 +55,10 @@ const paletteIndexes = {
  * @description Called whenever the color is changed provided chosen color in RGB HEX format. See options.sliderIndicator.callback param of the create method.
  * @param {object} c color
  * @param {string} c.hex A hexadecimal color is specified with: #RRGGBB, where the RR (red), GG (green) and BB (blue)
+ * <pre>
  * hexadecimal integers specify the components of the color. All values must be between 00 and FF.
  * Example #00ff00
+ * </pre>
  * @param {number} c.r red of RGB color value. Must be between 0 and 255.
  * @param {number} c.g green of RGB color value. Must be between 0 and 255.
  * @param {number} c.b blue of RGB color value. Must be between 0 and 255.
@@ -73,6 +75,7 @@ const paletteIndexes = {
  * @param {string|HTMLElement} elSliderWrapper id of the ColorPicker element or ColorPicker element
  * @param {object} [options] followed options is availablee
  * @param {paletteIndexes|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
+ * <pre>
  * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
  * paletteIndexes.monochrome: 1,
  * paletteIndexes.bidirectional: 2,//red, black, green
@@ -85,11 +88,14 @@ const paletteIndexes = {
 	{ percent: 100, r: 0xff, g: 255, b: 0xff, },
 ]
  * Palette see function Palette( options ) for details
+ * </pre>
  * @param {object} [options.orientation] orientation of the element. Available "horizontal" or "vertical" orientation
  * @param {object} [options.direction] true - position of the mouse pointer relative left side for 'horizontal' slider
  * or bottom side for 'vertical' slider in the percents.
+ * <p>
  * false - position of the mouse pointer relative right side for 'horizontal' slider
  * or relative top side for 'vertical' slider in the percents.
+ * </p>
  * Default is true.
  * @param {object} [options.style] style statements
  * @param {object} [options.style.width] width of the element. Default is 200px for options.orientation = "horizontal"
@@ -492,6 +498,7 @@ function CreateSVGElement( el, attrs, children ) {
  * create palette
  * @param {object} [options] followed options is available
  * @param {paletteIndexes|object[]} [options.palette] Palette index or palette array. The following indexes are available:
+ * <pre>
  * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
  * paletteIndexes.monochrome: 1,
  * paletteIndexes.bidirectional: 2,//red, black, green
@@ -503,6 +510,7 @@ function CreateSVGElement( el, attrs, children ) {
 	{ percent: 10, r: 0xff, g: 255, b: 0xff, },
 	{ percent: 100, r: 0xff, g: 255, b: 0xff, },
 ]
+* </pre>
 */
 function Palette( options ) {
 
@@ -585,7 +593,7 @@ function Palette( options ) {
 			options.onError( message );
 
 	}
-	/*
+	/**
 	* returns palette array.
 	* @function Palette.
 	* getPalette
@@ -611,7 +619,7 @@ function Palette( options ) {
 		return palette;
 
 	}
-	/*
+	/**
 	* converts a percent or value from min to max  to object with r, g, b, hex and percent.
 	* @function Palette.
 	* hsv2rgb
