@@ -40,7 +40,7 @@ var uniqID = 0;
 const paletteIndexes = {
 	
 
-	/** [blue, green, red, white]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW} palette */
+	/** [blue, green, red, white]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW} palette. This is the default palette*/
 	BGRW: 0,
 	/** [monochrome]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#Monochrome} palette */
 	monochrome: 1,
