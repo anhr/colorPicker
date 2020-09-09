@@ -1,4 +1,4 @@
-﻿# ColorPicker.
+# ColorPicker.
 
 Pure JavaScript color picker.
 
@@ -66,7 +66,7 @@ new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } )
 ## Directory Contents
 
 ```
-└── build - Compiled source code.
+build - Compiled source code.
 ```
 
 ## Building your own ColorPicker

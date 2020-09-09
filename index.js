@@ -691,9 +691,9 @@ function Palette( options ) {
 	* converts a value in percentages to color.
 	* @function Palette.
 	* toColor
-	* @param {number} value coordinate of color from palette in percent
-	* @param {number} min
-	* @param {number} max
+	* @param {number} value coordinate of color from palette in percent. Default value range from 0 to 100.
+	* @param {number} min minimal value
+	* @param {number} max maximal value
 	* @returns {THREE.Color} color
 	*/
 	this.toColor = function ( value, min, max ) {
